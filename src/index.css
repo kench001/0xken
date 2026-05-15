@@ -1,0 +1,108 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Syne:wght@400..800&display=swap');
+
+@theme {
+  --font-outfit: "Outfit", sans-serif;
+  --font-syne: "Syne", sans-serif;
+  
+  --color-brand-primary: #00ffaa;
+  --color-brand-secondary: #00ccff;
+}
+
+:root {
+  --focal-gradient: radial-gradient(circle at center, rgba(34, 197, 94, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+body {
+  @apply bg-black text-white font-outfit antialiased selection:bg-brand-primary selection:text-black;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+@layer utilities {
+  .bg-grid-lines {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: calc(100% / 6) 100%;
+  }
+
+  .focal-glow {
+    @apply absolute inset-[-20%] pointer-events-none opacity-60;
+    background: radial-gradient(circle at center, rgba(0, 255, 170, 0.12) 0%, transparent 70%);
+    filter: blur(80px);
+    animation: drift 20s ease-in-out infinite;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-linear-to-r from-brand-primary via-brand-secondary to-brand-primary;
+    background-size: 200% auto;
+    animation: text-flow 8s linear infinite;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(3%, 5%) scale(1.05); }
+  66% { transform: translate(-2%, 3%) scale(0.95); }
+}
+
+@keyframes text-flow {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scroll-move {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scroll-line-anim {
+  animation: scroll-move 2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+}
+
+.reveal-item {
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.reveal-item.is-revealed {
+  opacity: 100;
+  transform: translateY(0);
+}
+
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }

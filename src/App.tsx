@@ -1,21 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import Projects from './projects';
+import Contact from './contacts';
+
 
 // Component for scroll reveal animation
-function RevealItem({ children, delay = "", className = "" }: { children: React.ReactNode, delay?: string, className?: string }) {
+function RevealItem({ children, delay = "", className = "" }: { children?: React.ReactNode, delay?: string, className?: string }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsRevealed(true);
-          observer.unobserve(entry.target);
-        }
+        // Toggle reveal state based on intersection
+        setIsRevealed(entry.isIntersecting);
       },
-      { threshold: 0.15 }
+      { 
+        threshold: 0.15,
+        // Add a small margin to trigger slightly before/after it hits the viewport
+        rootMargin: '0px 0px -50px 0px' 
+      }
     );
 
     if (ref.current) observer.observe(ref.current);
@@ -35,6 +39,16 @@ function RevealItem({ children, delay = "", className = "" }: { children: React.
 function App() {
   const aboutRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleGlobalMouseMove = (e: MouseEvent) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleGlobalMouseMove);
+    return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
+  }, []);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -95,6 +109,12 @@ function App() {
       {/* Hero Section - UNTOUCHED CONTENT */}
       <section className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
         {/* Background Layers - Fading out */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-40 z-0"
+          style={{ 
+            background: `radial-gradient(1000px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0, 255, 170, 0.08), transparent 70%)` 
+          }}
+        />
         <div 
           className="absolute inset-0 bg-grid-lines pointer-events-none" 
           style={{ opacity: 0.4 * (1 - scrollProgress) }}
@@ -197,7 +217,7 @@ function App() {
       >
         <div className="max-w-7xl w-full">
           <div className="mb-32">
-            <RevealItem>
+            <RevealItem className="reveal-converge">
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-syne font-bold leading-[1.15] tracking-tight text-center md:text-left max-w-5xl">
                Web Developer & Project Manager. I transform complex ideas into simple, scalable digital products.
               </h2>
@@ -212,46 +232,57 @@ function App() {
               </div>
             </RevealItem>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-32">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-32 items-center">
               <div>
                 <RevealItem delay="delay-200">
-                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-syne font-bold tracking-tight">
-                    Hi, I'm Kench.
-                  </h3>
+                  <div className="relative inline-block mb-8">
+                    <h3 className="text-5xl md:text-7xl lg:text-8xl font-syne font-bold tracking-tighter">
+                      <RevealItem className="reveal-left inline-block" delay="delay-200">Hi, I'm</RevealItem>
+                      <RevealItem className="reveal-right inline-block ml-4" delay="delay-300">Kench.</RevealItem>
+                    </h3>
+                    <RevealItem className="reveal-blur absolute -bottom-4 left-0 w-24 h-2 bg-brand-primary/20 rounded-full" delay="delay-500" />
+                  </div>
                 </RevealItem>
                 
                 <RevealItem delay="delay-300">
-                  <button className="mt-12 group flex items-center gap-4 bg-black text-white px-8 py-4 rounded-full font-outfit font-medium transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer">
-                    <span>Get in Touch</span>
-                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
+                  <button className="mt-8 group relative flex items-center gap-6 bg-black text-white px-10 py-5 rounded-full font-outfit font-bold transition-all duration-500 hover:pr-14 hover:bg-brand-primary hover:text-black overflow-hidden shadow-2xl">
+                    <span className="relative z-10">Get in Touch</span>
+                    <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10 transition-all duration-500 group-hover:translate-x-2">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
                   </button>
                 </RevealItem>
               </div>
 
-              <div className="flex flex-col gap-8">
+              <div className="flex flex-col gap-8 relative">
+                <div 
+                  className="absolute -right-20 -top-20 w-64 h-64 bg-brand-primary/5 rounded-full blur-3xl pointer-events-none"
+                  style={{ 
+                    transform: `translate(${(mousePos.x - window.innerWidth / 2) * 0.02}px, ${(mousePos.y - window.innerHeight / 2) * 0.02}px)`
+                  }}
+                />
                 <RevealItem delay="delay-400">
-                  <p className="text-lg md:text-xl font-outfit leading-relaxed text-black/70 font-medium">
-                    I'm 21 year-old Web Developer and Project manager that is dedicated to leading the team to produce real solutions
+                  <p className="text-xl md:text-2xl font-outfit leading-relaxed text-black/80 font-medium">
+                    I'm a 21-year-old Web Developer and Project Manager dedicated to leading teams to produce high-impact, real-world solutions.
                   </p>
                 </RevealItem>
                 <RevealItem delay="delay-500">
-                  <p className="text-lg md:text-xl font-outfit leading-relaxed text-black/70 font-medium">
-                    I'm involved in different projects that lead my team to create the best projects. I developed web applications that solve real world problems. My focus is to make sure everything is scalable and the result is always data-driven.
+                  <p className="text-xl md:text-2xl font-outfit leading-relaxed text-black/60 font-medium italic">
+                    "I transform complex ideas into simple, scalable digital products that solve real-world problems."
                   </p>
                 </RevealItem>
               </div>
             </div>
+
+
           </div>
         </div>
       </section>
 
       <Projects />
-      
-      <footer className="bg-white py-12 px-6 text-center border-t border-black/5">
-        <p className="text-black/40 text-xs uppercase tracking-[0.4em] font-outfit">Kench &bull; Portfolio &bull; 2026</p>
-      </footer>
+      <Contact />
     </div>
   );
 }

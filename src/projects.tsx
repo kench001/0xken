@@ -1,52 +1,210 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import feasifyPreview from './assets/feasify-landing-page.png';
 
 interface ProjectProps {
   number: string;
   title: string;
   category: string;
+  description?: string;
+  image?: string;
+  color?: string;
 }
 
-const ProjectItem = ({ number, title, category }: ProjectProps) => {
+// Component for scroll reveal animation
+function RevealItem({ children, delay = "", className = "" }: { children?: React.ReactNode, delay?: string, className?: string }) {
+  const [isRevealed, setIsRevealed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsRevealed(entry.isIntersecting);
+      },
+      { 
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="group border-b border-black/10 py-12 md:py-20 flex flex-col md:flex-row md:items-baseline justify-between gap-4 transition-all duration-500 hover:px-4">
-      <div className="flex items-start gap-4 md:gap-8">
-        <span className="text-[10px] md:text-xs font-outfit opacity-40 mt-3 md:mt-7 font-medium tracking-widest">
+    <div 
+      ref={ref} 
+      className={`reveal-item ${isRevealed ? 'is-revealed' : ''} ${delay} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+const ProjectItem = ({ number, title, category, description, image, color }: ProjectProps) => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0, localX: 0, localY: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [isTitleHovered, setIsTitleHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX,
+      y: e.clientY,
+      localX: e.clientX - rect.left,
+      localY: e.clientY - rect.top,
+    });
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsHovered(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX,
+      y: e.clientY,
+      localX: e.clientX - rect.left,
+      localY: e.clientY - rect.top,
+    });
+  };
+
+  return (
+    <div 
+      className="group relative border-b border-black/5 py-8 md:py-12 flex flex-col md:flex-row md:items-baseline justify-between gap-4 transition-all duration-700 hover:px-12 hover:bg-black/[0.02]"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Background Accent */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+        style={{ 
+          background: `radial-gradient(600px circle at ${mousePos.localX}px ${mousePos.localY}px, ${color || 'rgba(0, 255, 170, 0.05)'}, transparent 40%)` 
+        }}
+      />
+
+      <div className="flex items-start gap-6 md:gap-12 relative z-10">
+        <span className="text-[10px] md:text-xs font-outfit opacity-30 mt-2 md:mt-4 font-bold tracking-[0.2em]">
           {number}
         </span>
-        <h3 className="text-4xl md:text-6xl lg:text-7xl font-outfit font-medium tracking-tight transition-all duration-500 group-hover:translate-x-4">
-          {title}
-        </h3>
+        <div className="flex flex-col gap-2 transition-all duration-700 group-hover:translate-x-6">
+          <h3 
+            className="text-4xl md:text-6xl lg:text-7xl font-outfit font-medium tracking-tighter transition-all duration-700 group-hover:text-black cursor-pointer"
+            onMouseEnter={() => setIsTitleHovered(true)}
+            onMouseLeave={() => setIsTitleHovered(false)}
+          >
+            {title}
+          </h3>
+          {description && (
+            <p className="text-sm md:text-base font-outfit max-w-md opacity-40 group-hover:opacity-60 transition-all duration-700 leading-relaxed">
+              {description}
+            </p>
+          )}
+        </div>
       </div>
-      <div className="md:text-right">
-        <span className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.2em] opacity-60 font-semibold">
+      
+      <div className="md:text-right relative z-10">
+        <span className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.3em] opacity-40 font-bold group-hover:opacity-100 transition-opacity duration-500">
           {category}
         </span>
       </div>
+
+      {/* Floating Explore Label */}
+      <div 
+        className="absolute pointer-events-none z-50 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out hidden lg:flex items-center justify-center"
+        style={{
+          left: mousePos.localX,
+          top: mousePos.localY,
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <div className="w-24 h-24 rounded-full bg-brand-primary flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-500 delay-100 shadow-xl">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-black">Explore</span>
+        </div>
+      </div>
+
+      {image && typeof document !== 'undefined' && createPortal(
+        <div 
+          className={`fixed pointer-events-none z-[9999] transition-all duration-500 ease-out hidden md:block ${isHovered && !isTitleHovered ? 'opacity-100' : 'opacity-0'}`}
+          style={{
+            left: mousePos.x,
+            top: mousePos.y,
+            transform: `translate(-50%, -50%) rotate(${isHovered && !isTitleHovered ? '-2deg' : '0deg'})`,
+          }}
+        >
+          <div className={`w-80 lg:w-[450px] overflow-hidden rounded-2xl shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] border border-black/10 bg-white transition-all duration-500 ease-out ${isHovered && !isTitleHovered ? 'scale-100' : 'scale-90'}`}>
+            <img 
+              src={image} 
+              alt={title} 
+              className="w-full h-auto"
+            />
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
+
+
 
 export const Projects = () => {
   const [activeTab, setActiveTab] = useState<'projects' | 'experience'>('projects');
 
   const projects = [
-    { number: '01', title: 'Feasify', category: 'Project Manager / Lead Dev' },
-    { number: '02', title: 'AttendScan', category: 'Lead Dev' },
-    { number: '03', title: 'University-Hunt', category: 'Frontend Development' },
+    { 
+      number: '01', 
+      title: 'Feasify', 
+      category: 'Project Manager / Lead Dev', 
+      description: 'A comprehensive platform for feasibility studies and project management, streamlining workflows for modern teams.',
+      image: feasifyPreview, 
+      color: 'rgba(0, 255, 170, 0.08)' 
+    },
+    { 
+      number: '02', 
+      title: 'AttendScan', 
+      category: 'Lead Dev', 
+      description: 'Smart attendance tracking system using QR codes and real-time analytics for educational institutions and events.',
+      color: 'rgba(0, 204, 255, 0.08)' 
+    },
+    { 
+      number: '03', 
+      title: 'University-Hunt', 
+      category: 'Frontend Development', 
+      description: 'A specialized search engine and platform helping students discover and compare universities across metro manila.',
+      color: 'rgba(255, 100, 255, 0.08)' 
+    },
   ];
 
   const experiences = [
-    { number: '2024 - Present', title: 'Project Manager', category: 'Game Dev' },
-    { number: '2022 - 2024', title: 'Hosted', category: 'Sui' },
-    { number: '2021 - 2022', title: 'Volunteer', category: 'Blockchain Campus Conference' },
+    { 
+      number: '2024 - Present', 
+      title: 'Project Manager', 
+      category: 'Game Dev', 
+      description: 'Leading cross-functional teams in developing immersive gaming experiences and interactive media projects.',
+      color: 'rgba(0, 255, 170, 0.05)' 
+    },
+    { 
+      number: '2022 - 2024', 
+      title: 'Hosted', 
+      category: 'Sui', 
+      description: 'Building scalable infrastructure and developer tools to enhance the ecosystem on the Sui blockchain.',
+      color: 'rgba(0, 204, 255, 0.05)' 
+    },
+    { 
+      number: '2021 - 2022', 
+      title: 'Volunteer', 
+      category: 'Blockchain Campus Conference', 
+      description: 'Organizing and facilitating large-scale educational events to foster blockchain adoption in academic communities.',
+      color: 'rgba(255, 170, 0, 0.05)' 
+    },
   ];
 
   const items = activeTab === 'projects' ? projects : experiences;
 
   return (
-    <section className="w-full py-24 md:py-40 px-6 md:px-20 lg:px-32 bg-white text-black">
+    <section className="w-full py-16 md:py-24 px-6 md:px-20 lg:px-32 bg-white text-black">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-20 md:mb-32 flex flex-col items-center">
+        <div className="mb-12 md:mb-16 flex flex-col items-center">
           <div className="relative flex bg-black/5 p-1 rounded-full mb-8">
             <div 
               className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-black rounded-full transition-all duration-500 ease-out ${
@@ -71,14 +229,18 @@ export const Projects = () => {
             </button>
           </div>
           
-          <h2 className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.5em] opacity-60 font-bold">
-            {activeTab === 'projects' ? 'Selected Work' : 'Professional Journey'}
-          </h2>
+          <RevealItem className="reveal-converge" delay="delay-100">
+            <h2 className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.5em] opacity-60 font-bold">
+              {activeTab === 'projects' ? 'Selected Work' : 'Professional Journey'}
+            </h2>
+          </RevealItem>
         </div>
         
         <div className="flex flex-col min-h-[400px]">
           {items.map((item, index) => (
-            <ProjectItem key={`${activeTab}-${index}`} {...item} />
+            <RevealItem key={`${activeTab}-${index}`} delay={`delay-${(index + 1) * 100}`}>
+              <ProjectItem {...item} />
+            </RevealItem>
           ))}
         </div>
       </div>

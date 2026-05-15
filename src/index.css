@@ -17,6 +17,35 @@ body {
   @apply bg-black text-white font-outfit antialiased selection:bg-brand-primary selection:text-black;
   margin: 0;
   overflow-x: hidden;
+  position: relative;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 9999;
+  animation: noise 8s steps(10) infinite;
+}
+
+@keyframes noise {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0); }
+  70% { transform: translate(0, 10%); }
+  80% { transform: translate(-15%, 0); }
+  90% { transform: translate(10%, 5%); }
+  100% { transform: translate(5%, 0); }
 }
 
 html.lenis,
@@ -97,7 +126,37 @@ html.lenis body {
 }
 
 .reveal-item.is-revealed {
-  opacity: 100;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  transform: translateX(-60px);
+}
+
+.reveal-right {
+  transform: translateX(60px);
+}
+
+.reveal-converge {
+  letter-spacing: 0.3em;
+  filter: blur(10px);
+  transform: scale(1.05);
+}
+
+.reveal-converge.is-revealed {
+  letter-spacing: normal;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+.reveal-blur {
+  filter: blur(20px);
+  transform: translateY(20px);
+}
+
+.reveal-blur.is-revealed {
+  filter: blur(0);
   transform: translateY(0);
 }
 
@@ -105,4 +164,7 @@ html.lenis body {
 .delay-200 { transition-delay: 200ms; }
 .delay-300 { transition-delay: 300ms; }
 .delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-700 { transition-delay: 700ms; }
+.delay-1000 { transition-delay: 1000ms; }
+

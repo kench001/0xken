@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import feasifyPreview from './assets/feasify-landing-page.png';
+import attendscanPreview from './assets/attendscan_preview.png';
+import universityHuntPreview from './assets/universityhunt.png';
+
 
 interface ProjectProps {
   number: string;
@@ -164,6 +167,7 @@ export const Projects = () => {
       title: 'AttendScan', 
       category: 'Lead Dev', 
       description: 'Smart attendance tracking system using QR codes and real-time analytics for educational institutions and events.',
+      image: attendscanPreview,
       color: 'rgba(0, 204, 255, 0.08)' 
     },
     { 
@@ -171,6 +175,7 @@ export const Projects = () => {
       title: 'University-Hunt', 
       category: 'Frontend Development', 
       description: 'A specialized search engine and platform helping students discover and compare universities across metro manila.',
+      image: universityHuntPreview,
       color: 'rgba(255, 100, 255, 0.08)' 
     },
   ];

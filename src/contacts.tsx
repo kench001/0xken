@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 // Component for scroll reveal animation
-function RevealItem({ children, delay = "", className = "" }: { children?: React.ReactNode, delay?: string, className?: string }) {
+const RevealItem = React.memo(function RevealItem({ children, delay = "", className = "" }: { children?: React.ReactNode, delay?: string, className?: string }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -28,11 +28,11 @@ function RevealItem({ children, delay = "", className = "" }: { children?: React
       {children}
     </div>
   );
-}
+});
 
-const Contact = () => {
+const Contact = React.memo(() => {
   return (
-    <section className="relative min-h-screen w-full bg-white flex flex-col items-center justify-between py-12 px-6 overflow-hidden">
+    <section id="contact" className="relative min-h-screen w-full bg-white flex flex-col items-center justify-between py-12 px-6 overflow-hidden">
       {/* Background Gradient Effect */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-purple-100/40 rounded-full blur-[120px]" />
@@ -118,6 +118,6 @@ const Contact = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Contact;

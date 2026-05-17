@@ -15,7 +15,7 @@ interface ProjectProps {
 }
 
 // Component for scroll reveal animation
-function RevealItem({ children, delay = "", className = "" }: { children?: React.ReactNode, delay?: string, className?: string }) {
+const RevealItem = React.memo(function RevealItem({ children, delay = "", className = "" }: { children?: React.ReactNode, delay?: string, className?: string }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -42,9 +42,9 @@ function RevealItem({ children, delay = "", className = "" }: { children?: React
       {children}
     </div>
   );
-}
+});
 
-const ProjectItem = ({ number, title, category, description, image, color }: ProjectProps) => {
+const ProjectItem = React.memo(({ number, title, category, description, image, color }: ProjectProps) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0, localX: 0, localY: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [isTitleHovered, setIsTitleHovered] = useState(false);
@@ -127,11 +127,13 @@ const ProjectItem = ({ number, title, category, description, image, color }: Pro
 
       {image && typeof document !== 'undefined' && createPortal(
         <div 
-          className={`fixed pointer-events-none z-[9999] transition-all duration-500 ease-out hidden md:block ${isHovered && !isTitleHovered ? 'opacity-100' : 'opacity-0'}`}
+          className="fixed pointer-events-none z-[9999] transition-all duration-500 ease-out hidden md:block"
           style={{
             left: mousePos.x,
             top: mousePos.y,
             transform: `translate(-50%, -50%) rotate(${isHovered && !isTitleHovered ? '-2deg' : '0deg'})`,
+            opacity: isHovered && !isTitleHovered ? 1 : 0,
+            visibility: isHovered && !isTitleHovered ? 'visible' : 'hidden',
           }}
         >
           <div className={`w-80 lg:w-[450px] overflow-hidden rounded-2xl shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] border border-black/10 bg-white transition-all duration-500 ease-out ${isHovered && !isTitleHovered ? 'scale-100' : 'scale-90'}`}>
@@ -146,11 +148,11 @@ const ProjectItem = ({ number, title, category, description, image, color }: Pro
       )}
     </div>
   );
-};
+});
 
 
 
-export const Projects = () => {
+export const Projects = React.memo(() => {
   const [activeTab, setActiveTab] = useState<'projects' | 'experience'>('projects');
 
   const projects = [
@@ -207,7 +209,7 @@ export const Projects = () => {
   const items = activeTab === 'projects' ? projects : experiences;
 
   return (
-    <section className="w-full py-16 md:py-24 px-6 md:px-20 lg:px-32 bg-white text-black">
+    <section id="projects" className="w-full py-16 md:py-24 px-6 md:px-20 lg:px-32 bg-white text-black">
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 md:mb-16 flex flex-col items-center">
           <div className="relative flex bg-black/5 p-1 rounded-full mb-8">
@@ -251,7 +253,7 @@ export const Projects = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Projects;
 

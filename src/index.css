@@ -168,3 +168,14 @@ html.lenis body {
 .delay-700 { transition-delay: 700ms; }
 .delay-1000 { transition-delay: 1000ms; }
 
+.scroll-indicator-reset,
+.scroll-indicator-reset:focus,
+.scroll-indicator-reset:focus-visible,
+.scroll-indicator-reset:focus-within,
+.scroll-indicator-reset:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+

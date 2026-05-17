@@ -370,15 +370,30 @@ function App() {
                     transform: 'translate(var(--about-glow-x, 0px), var(--about-glow-y, 0px))'
                   }}
                 />
-                <RevealItem delay="delay-400">
-                  <p className="text-xl md:text-2xl font-outfit leading-relaxed text-black/80 font-medium">
-                    I'm a 21-year-old Web Developer and Project Manager dedicated to leading teams to produce high-impact, real-world solutions.
-                  </p>
-                </RevealItem>
-                <RevealItem delay="delay-500">
-                  <p className="text-xl md:text-2xl font-outfit leading-relaxed text-black/60 font-medium italic">
-                    "I transform complex ideas into simple, scalable digital products that solve real-world problems."
-                  </p>
+                <div className="flex flex-col gap-6">
+                  <RevealItem delay="delay-400">
+                    <p className="text-xl md:text-2xl font-outfit leading-relaxed text-black/80 font-medium">
+                      I'm a 21-year-old Web Developer and Project Manager dedicated to leading teams to produce high-impact, real-world solutions.
+                    </p>
+                  </RevealItem>
+                  <RevealItem delay="delay-500">
+                    <p className="text-xl md:text-2xl font-outfit leading-relaxed text-black/60 font-medium italic">
+                      "I transform complex ideas into simple, scalable digital products that solve real-world problems."
+                    </p>
+                  </RevealItem>
+                </div>
+                <RevealItem delay="delay-600" className="self-end -mt-2">
+                  <button 
+                    className="group inline-flex items-center gap-2.5 text-black/70 hover:text-black font-outfit font-bold text-sm tracking-wide transition-colors duration-300 relative py-1 cursor-pointer"
+                  >
+                    <span>Know more about me</span>
+                    <span className="transition-transform duration-300 group-hover:translate-x-1">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </span>
+                    <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black transition-all duration-300 group-hover:w-full" />
+                  </button>
                 </RevealItem>
               </div>
             </div>

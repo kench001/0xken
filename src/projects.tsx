@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom';
 import feasifyPreview from './assets/feasify-landing-page.png';
 import attendscanPreview from './assets/attendscan_preview.png';
 import universityHuntPreview from './assets/universityhunt.png';
-
+import ProjectPreview from './projectpreview';
+import type { ProjectData } from './projectpreview';
 
 interface ProjectProps {
   number: string;
@@ -12,6 +13,7 @@ interface ProjectProps {
   description?: string;
   image?: string;
   color?: string;
+  onClick?: () => void;
 }
 
 // Component for scroll reveal animation
@@ -24,7 +26,7 @@ const RevealItem = React.memo(function RevealItem({ children, delay = "", classN
       ([entry]) => {
         setIsRevealed(entry.isIntersecting);
       },
-      { 
+      {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
       }
@@ -35,8 +37,8 @@ const RevealItem = React.memo(function RevealItem({ children, delay = "", classN
   }, []);
 
   return (
-    <div 
-      ref={ref} 
+    <div
+      ref={ref}
       className={`reveal-item ${isRevealed ? 'is-revealed' : ''} ${delay} ${className}`}
     >
       {children}
@@ -44,7 +46,7 @@ const RevealItem = React.memo(function RevealItem({ children, delay = "", classN
   );
 });
 
-const ProjectItem = React.memo(({ number, title, category, description, image, color }: ProjectProps) => {
+const ProjectItem = React.memo(({ number, title, category, description, image, color, onClick }: ProjectProps) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0, localX: 0, localY: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [isTitleHovered, setIsTitleHovered] = useState(false);
@@ -71,17 +73,18 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
   };
 
   return (
-    <div 
-      className="group relative border-b border-black/5 py-8 md:py-12 flex flex-col md:flex-row md:items-baseline justify-between gap-4 transition-all duration-700 hover:px-12 hover:bg-black/[0.02]"
+    <div
+      className={`group relative border-b border-black/5 py-8 md:py-12 flex flex-col md:flex-row md:items-baseline justify-between gap-4 transition-all duration-700 hover:px-12 hover:bg-black/[0.02] ${onClick ? 'cursor-pointer' : ''}`}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
     >
       {/* Background Accent */}
-      <div 
+      <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-        style={{ 
-          background: `radial-gradient(600px circle at ${mousePos.localX}px ${mousePos.localY}px, ${color || 'rgba(0, 255, 170, 0.05)'}, transparent 40%)` 
+        style={{
+          background: `radial-gradient(600px circle at ${mousePos.localX}px ${mousePos.localY}px, ${color || 'rgba(0, 255, 170, 0.05)'}, transparent 40%)`
         }}
       />
 
@@ -90,8 +93,8 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
           {number}
         </span>
         <div className="flex flex-col gap-2 transition-all duration-700 group-hover:translate-x-6">
-          <h3 
-            className="text-4xl md:text-6xl lg:text-7xl font-outfit font-medium tracking-tighter transition-all duration-700 group-hover:text-black cursor-pointer"
+          <h3
+            className="text-4xl md:text-6xl lg:text-7xl font-outfit font-medium tracking-tighter transition-all duration-700 group-hover:text-black"
             onMouseEnter={() => setIsTitleHovered(true)}
             onMouseLeave={() => setIsTitleHovered(false)}
           >
@@ -104,7 +107,7 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
           )}
         </div>
       </div>
-      
+
       <div className="md:text-right relative z-10">
         <span className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.3em] opacity-40 font-bold group-hover:opacity-100 transition-opacity duration-500">
           {category}
@@ -112,21 +115,23 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
       </div>
 
       {/* Floating Explore Label */}
-      <div 
-        className="absolute pointer-events-none z-50 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out hidden lg:flex items-center justify-center"
-        style={{
-          left: mousePos.localX,
-          top: mousePos.localY,
-          transform: 'translate(-50%, -50%)',
-        }}
-      >
-        <div className="w-24 h-24 rounded-full bg-brand-primary flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-500 delay-100 shadow-xl">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-black">Explore</span>
+      {onClick && (
+        <div
+          className="absolute pointer-events-none z-50 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out hidden lg:flex items-center justify-center"
+          style={{
+            left: mousePos.localX,
+            top: mousePos.localY,
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <div className="w-24 h-24 rounded-full bg-brand-primary flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-500 delay-100 shadow-xl">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-black">Explore</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {image && typeof document !== 'undefined' && createPortal(
-        <div 
+        <div
           className="fixed pointer-events-none z-[9999] transition-all duration-500 ease-out hidden md:block"
           style={{
             left: mousePos.x,
@@ -137,9 +142,9 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
           }}
         >
           <div className={`w-80 lg:w-[450px] overflow-hidden rounded-2xl shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] border border-black/10 bg-white transition-all duration-500 ease-out ${isHovered && !isTitleHovered ? 'scale-100' : 'scale-90'}`}>
-            <img 
-              src={image} 
-              alt={title} 
+            <img
+              src={image}
+              alt={title}
               className="w-full h-auto"
             />
           </div>
@@ -150,59 +155,81 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
   );
 });
 
-
-
 export const Projects = React.memo(() => {
   const [activeTab, setActiveTab] = useState<'projects' | 'experience'>('projects');
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
 
-  const projects = [
-    { 
-      number: '01', 
-      title: 'Feasify', 
-      category: 'Project Manager / Lead Dev', 
+  // Clear selected project when changing tabs
+  useEffect(() => {
+    setSelectedProject(null);
+  }, [activeTab]);
+
+  const projects: ProjectData[] = [
+    {
+      number: '01',
+      title: 'Feasify',
+      category: 'Project Manager / Lead Dev',
       description: 'A comprehensive platform for feasibility studies and project management, streamlining workflows for modern teams.',
-      image: feasifyPreview, 
-      color: 'rgba(0, 255, 170, 0.08)' 
+      detailedDescription: 'Feasify is a web-based project management platform tailored for collaborative feasibility studies. It streamlines team workflows by providing structured modules for documentation, financial analysis, risk assessment, and milestone tracking. The system enables real-time collaboration, automatic report generation, and role-based permissions, allowing organizations to evaluate projects efficiently.',
+      image: feasifyPreview,
+      color: 'rgba(0, 255, 170, 0.08)',
+      technologies: {
+        frontend: 'React, TypeScript, TailwindCSS, Framer Motion',
+        backend: 'Node.js, Express, MongoDB, Mongoose, JWT'
+      },
+      projectUrl: 'https://feasify.com'
     },
-    { 
-      number: '02', 
-      title: 'AttendScan', 
-      category: 'Lead Dev', 
+    {
+      number: '02',
+      title: 'AttendScan',
+      category: 'Lead Dev',
       description: 'Smart attendance tracking system using QR codes and real-time analytics for educational institutions and events.',
+      detailedDescription: 'AttendScan is a smart, mobile-first attendance management system designed to eliminate manual sign-ins. Users generate unique, dynamic QR codes, which attendees scan to check in instantly. The admin dashboard features real-time tracking, geolocation validation to prevent fraud, and comprehensive PDF/CSV report exports for simple integration with academic or corporate databases.',
       image: attendscanPreview,
-      color: 'rgba(0, 204, 255, 0.08)' 
+      color: 'rgba(0, 204, 255, 0.08)',
+      technologies: {
+        frontend: 'React Native, Expo, TailwindCSS, Chart.js',
+        backend: 'Firebase, Cloud Functions, Firestore Auth'
+      },
+      projectUrl: 'https://attendscan.com'
     },
-    { 
-      number: '03', 
-      title: 'University-Hunt', 
-      category: 'Frontend Development', 
+    {
+      number: '03',
+      title: 'University-Hunt',
+      category: 'Frontend Development',
       description: 'A specialized search engine and platform helping students discover and compare universities across metro manila.',
+      detailedDescription: 'University-Hunt is a comprehensive portal and search engine designed to assist incoming college students in navigating educational options in Metro Manila. The platform offers advanced filtering by program, tuition range, location, and facility reviews. It also includes an interactive comparison matrix and virtual map integrations to help students plan their academic future.',
       image: universityHuntPreview,
-      color: 'rgba(255, 100, 255, 0.08)' 
+      color: 'rgba(255, 100, 255, 0.08)',
+      technologies: {
+        frontend: 'React, Next.js, TailwindCSS, Mapbox API',
+        backend: 'Express, PostgreSQL, Prisma, Algolia Search'
+      },
+      projectUrl: 'https://universityhunt.com'
     },
   ];
 
   const experiences = [
-    { 
-      number: '2024 - Present', 
-      title: 'Project Manager', 
-      category: 'Game Dev', 
+    {
+      number: '2024 - Present',
+      title: 'Project Manager',
+      category: 'Game Dev',
       description: 'Leading cross-functional teams in developing immersive gaming experiences and interactive media projects.',
-      color: 'rgba(0, 255, 170, 0.05)' 
+      color: 'rgba(0, 255, 170, 0.05)'
     },
-    { 
-      number: '2022 - 2024', 
-      title: 'Hosted', 
-      category: 'Sui', 
+    {
+      number: '2022 - 2024',
+      title: 'Hosted',
+      category: 'Sui',
       description: 'Building scalable infrastructure and developer tools to enhance the ecosystem on the Sui blockchain.',
-      color: 'rgba(0, 204, 255, 0.05)' 
+      color: 'rgba(0, 204, 255, 0.05)'
     },
-    { 
-      number: '2021 - 2022', 
-      title: 'Volunteer', 
-      category: 'Blockchain Campus Conference', 
+    {
+      number: '2021 - 2022',
+      title: 'Volunteer',
+      category: 'Blockchain Campus Conference',
       description: 'Organizing and facilitating large-scale educational events to foster blockchain adoption in academic communities.',
-      color: 'rgba(255, 170, 0, 0.05)' 
+      color: 'rgba(255, 170, 0, 0.05)'
     },
   ];
 
@@ -213,47 +240,54 @@ export const Projects = React.memo(() => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 md:mb-16 flex flex-col items-center">
           <div className="relative flex bg-black/5 p-1 rounded-full mb-8">
-            <div 
-              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-black rounded-full transition-all duration-500 ease-out ${
-                activeTab === 'experience' ? 'translate-x-full' : 'translate-x-0'
-              }`}
+            <div
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-black rounded-full transition-all duration-500 ease-out ${activeTab === 'experience' ? 'translate-x-full' : 'translate-x-0'
+                }`}
             />
-            <button 
+            <button
               onClick={() => setActiveTab('projects')}
-              className={`relative z-10 px-8 py-3 text-[10px] md:text-xs font-outfit uppercase tracking-widest font-bold transition-colors duration-300 ${
-                activeTab === 'projects' ? 'text-white' : 'text-black/40'
-              }`}
+              className={`relative z-10 px-8 py-3 text-[10px] md:text-xs font-outfit uppercase tracking-widest font-bold transition-colors duration-300 ${activeTab === 'projects' ? 'text-white' : 'text-black/40'
+                }`}
             >
               Projects
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('experience')}
-              className={`relative z-10 px-8 py-3 text-[10px] md:text-xs font-outfit uppercase tracking-widest font-bold transition-colors duration-300 ${
-                activeTab === 'experience' ? 'text-white' : 'text-black/40'
-              }`}
+              className={`relative z-10 px-8 py-3 text-[10px] md:text-xs font-outfit uppercase tracking-widest font-bold transition-colors duration-300 ${activeTab === 'experience' ? 'text-white' : 'text-black/40'
+                }`}
             >
               Experience
             </button>
           </div>
-          
+
           <RevealItem className="reveal-converge" delay="delay-100">
             <h2 className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.5em] opacity-60 font-bold">
               {activeTab === 'projects' ? 'Selected Work' : 'Professional Journey'}
             </h2>
           </RevealItem>
         </div>
-        
+
         <div className="flex flex-col min-h-[400px]">
           {items.map((item, index) => (
             <RevealItem key={`${activeTab}-${index}`} delay={`delay-${(index + 1) * 100}`}>
-              <ProjectItem {...item} />
+              <ProjectItem
+                {...item}
+                onClick={activeTab === 'projects' ? () => setSelectedProject(item as ProjectData) : undefined}
+              />
             </RevealItem>
           ))}
         </div>
       </div>
+
+      {/* Project Details Preview Overlay */}
+      <ProjectPreview
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
     </section>
   );
 });
 
 export default Projects;
+
 

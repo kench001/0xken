@@ -15,10 +15,10 @@ const RevealItem = React.memo(function RevealItem({ children, delay = "", classN
         // Toggle reveal state based on intersection
         setIsRevealed(entry.isIntersecting);
       },
-      { 
+      {
         threshold: 0.15,
         // Add a small margin to trigger slightly before/after it hits the viewport
-        rootMargin: '0px 0px -50px 0px' 
+        rootMargin: '0px 0px -50px 0px'
       }
     );
 
@@ -27,8 +27,8 @@ const RevealItem = React.memo(function RevealItem({ children, delay = "", classN
   }, []);
 
   return (
-    <div 
-      ref={ref} 
+    <div
+      ref={ref}
       className={`reveal-item ${isRevealed ? 'is-revealed' : ''} ${delay} ${className}`}
     >
       {children}
@@ -48,7 +48,7 @@ function App() {
       if (containerRef.current) {
         containerRef.current.style.setProperty('--mouse-x', `${e.clientX}px`);
         containerRef.current.style.setProperty('--mouse-y', `${e.clientY}px`);
-        
+
         const glowX = (e.clientX - window.innerWidth / 2) * 0.02;
         const glowY = (e.clientY - window.innerHeight / 2) * 0.02;
         containerRef.current.style.setProperty('--about-glow-x', `${glowX}px`);
@@ -148,21 +148,21 @@ function App() {
   }, []);
 
   // Easing function for smoother color transition (easeInOutQuad)
-  const easedProgress = scrollProgress < 0.5 
-    ? 2 * scrollProgress * scrollProgress 
+  const easedProgress = scrollProgress < 0.5
+    ? 2 * scrollProgress * scrollProgress
     : 1 - Math.pow(-2 * scrollProgress + 2, 2) / 2;
 
   // Interpolate colors
   const bgValue = easedProgress * 255;
   const bgColor = `rgb(${bgValue}, ${bgValue}, ${bgValue})`;
-  
+
   // UI colors (text/lines) transition from white (255) to black (0)
   const uiValue = (1 - easedProgress) * 255;
   const uiColor = `rgb(${uiValue}, ${uiValue}, ${uiValue})`;
   const uiColorAlpha = `rgba(${uiValue}, ${uiValue}, ${uiValue}, 0.7)`;
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="selection:bg-brand-primary selection:text-black min-h-screen"
       style={{ backgroundColor: bgColor }}
@@ -170,30 +170,30 @@ function App() {
       {/* Hero Section - UNTOUCHED CONTENT */}
       <section id="home" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
         {/* Background Layers - Fading out */}
-        <div 
+        <div
           className="absolute inset-0 pointer-events-none opacity-40 z-0"
-          style={{ 
-            background: `radial-gradient(1000px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 255, 170, 0.08), transparent 70%)` 
+          style={{
+            background: `radial-gradient(1000px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 255, 170, 0.08), transparent 70%)`
           }}
         />
-        <div 
-          className="absolute inset-0 bg-grid-lines pointer-events-none" 
+        <div
+          className="absolute inset-0 bg-grid-lines pointer-events-none"
           style={{ opacity: 0.4 * (1 - scrollProgress) }}
         />
-        <div 
-          className="focal-glow" 
+        <div
+          className="focal-glow"
           style={{ opacity: 0.6 * (1 - scrollProgress) }}
         />
-        <div 
-          className="focal-glow !animate-[drift_35s_ease-in-out_infinite_reverse]" 
-          style={{ 
+        <div
+          className="focal-glow !animate-[drift_35s_ease-in-out_infinite_reverse]"
+          style={{
             background: 'radial-gradient(circle at center, rgba(0, 204, 255, 0.15) 0%, transparent 75%)',
             opacity: 0.2 * (1 - scrollProgress)
-          }} 
+          }}
         />
-        
+
         {/* Decorative V-Shape at bottom */}
-        <div 
+        <div
           className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-32 pointer-events-none"
           style={{ opacity: 0.1 * (1 - scrollProgress) }}
         >
@@ -211,25 +211,23 @@ function App() {
           const isScrolled = scrollProgress > 0.15;
           return (
             <nav className="fixed top-8 right-8 z-[100]">
-              <button 
+              <button
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="group flex items-center gap-3 text-sm font-medium tracking-widest uppercase transition-all duration-300 focus:outline-none cursor-pointer"
               >
                 {/* Active Section indicator (e.g. HOME, ABOUT) - collapses on scroll/open */}
-                <span 
-                  className={`text-[10px] tracking-[0.25em] font-semibold transition-all duration-500 overflow-hidden inline-block ${
-                    isScrolled || menuOpen ? 'max-w-0 opacity-0 mr-0' : 'max-w-xs opacity-50 mr-2'
-                  }`}
+                <span
+                  className={`text-[10px] tracking-[0.25em] font-semibold transition-all duration-500 overflow-hidden inline-block ${isScrolled || menuOpen ? 'max-w-0 opacity-0 mr-0' : 'max-w-xs opacity-50 mr-2'
+                    }`}
                   style={{ color: buttonColor }}
                 >
                   {activeSection} &nbsp;&bull;&nbsp;
                 </span>
 
                 {/* "menu" / "close" Text - collapses dynamically on scroll */}
-                <span 
-                  className={`transition-all duration-500 overflow-hidden inline-block ${
-                    isScrolled && !menuOpen ? 'max-w-0 opacity-0 mr-0' : 'max-w-xs opacity-70 mr-1'
-                  }`}
+                <span
+                  className={`transition-all duration-500 overflow-hidden inline-block ${isScrolled && !menuOpen ? 'max-w-0 opacity-0 mr-0' : 'max-w-xs opacity-70 mr-1'
+                    }`}
                   style={{ color: buttonColor }}
                 >
                   {menuOpen ? 'close' : 'menu'}
@@ -237,22 +235,19 @@ function App() {
 
                 {/* Hamburger to X Animated Lines */}
                 <div className="flex flex-col gap-1 w-6 h-4 justify-center items-end relative">
-                  <span 
-                    className={`h-px transition-all duration-500 origin-center absolute ${
-                      menuOpen ? 'w-6 rotate-45' : 'w-6 -translate-y-1.5 group-hover:w-6'
-                    }`}
+                  <span
+                    className={`h-px transition-all duration-500 origin-center absolute ${menuOpen ? 'w-6 rotate-45' : 'w-6 -translate-y-1.5 group-hover:w-6'
+                      }`}
                     style={{ backgroundColor: buttonColor }}
                   />
-                  <span 
-                    className={`h-px transition-all duration-500 absolute ${
-                      menuOpen ? 'w-0 opacity-0' : 'w-4 group-hover:w-6'
-                    }`}
+                  <span
+                    className={`h-px transition-all duration-500 absolute ${menuOpen ? 'w-0 opacity-0' : 'w-4 group-hover:w-6'
+                      }`}
                     style={{ backgroundColor: buttonColor }}
                   />
-                  <span 
-                    className={`h-px transition-all duration-500 origin-center absolute ${
-                      menuOpen ? 'w-6 -rotate-45' : 'w-5 group-hover:w-6 translate-y-1.5'
-                    }`}
+                  <span
+                    className={`h-px transition-all duration-500 origin-center absolute ${menuOpen ? 'w-6 -rotate-45' : 'w-5 group-hover:w-6 translate-y-1.5'
+                      }`}
                     style={{ backgroundColor: buttonColor }}
                   />
                 </div>
@@ -262,7 +257,7 @@ function App() {
         })()}
 
         {/* Hero Content */}
-        <div 
+        <div
           className="relative z-10 text-center px-6 animate-fade-in"
           style={{ opacity: 1 - scrollProgress * 1.5 }}
         >
@@ -271,18 +266,18 @@ function App() {
             <span className="text-gradient drop-shadow-[0_0_30px_rgba(0,255,170,0.3)]">I lead.</span>
             <span className="opacity-90" style={{ color: uiColor }}>I deliver.</span>
           </h1>
-          
+
           <div className="mt-8 flex items-center justify-center gap-4">
             <div className="w-8 h-px bg-white/10" style={{ backgroundColor: `rgba(${uiValue}, ${uiValue}, ${uiValue}, 0.1)` }} />
             <p className="text-xs md:text-sm uppercase tracking-[0.3em] font-medium font-outfit" style={{ color: `rgba(${uiValue}, ${uiValue}, ${uiValue}, 0.5)` }}>
-               &bull; Project Manager & Web Developer
+              &bull; Project Manager & Web Developer
             </p>
             <div className="w-8 h-px bg-white/10" style={{ backgroundColor: `rgba(${uiValue}, ${uiValue}, ${uiValue}, 0.1)` }} />
           </div>
         </div>
-        
+
         {/* Scroll Indicator */}
-        <div 
+        <div
           onClick={() => {
             const lenis = (window as any).lenis;
             if (lenis && aboutRef.current) {
@@ -290,7 +285,7 @@ function App() {
             }
           }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 transition-all duration-500 cursor-pointer z-20 hover:translate-y-1 outline-none scroll-indicator-reset"
-          style={{ 
+          style={{
             opacity: Math.max(0, 1 - scrollProgress * 3),
             pointerEvents: scrollProgress > 0.3 ? 'none' : 'auto',
             color: uiColor,
@@ -301,9 +296,9 @@ function App() {
         >
           <span className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-80">scroll</span>
           <div className="w-px h-12 bg-white/10 relative overflow-hidden" style={{ backgroundColor: `rgba(${uiValue}, ${uiValue}, ${uiValue}, 0.1)` }}>
-            <div 
-              className="absolute top-0 left-0 w-full h-full scroll-line-anim" 
-              style={{ 
+            <div
+              className="absolute top-0 left-0 w-full h-full scroll-line-anim"
+              style={{
                 backgroundColor: uiColor,
                 opacity: 0.8
               }}
@@ -313,7 +308,7 @@ function App() {
       </section>
 
       {/* About Me Section - Seamless Transition */}
-      <section 
+      <section
         id="about"
         ref={aboutRef}
         className="relative min-h-screen w-full py-32 px-6 md:px-20 lg:px-32 flex flex-col items-center justify-center overflow-hidden"
@@ -323,7 +318,7 @@ function App() {
           <div className="mb-32">
             <RevealItem className="reveal-converge">
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-syne font-bold leading-[1.15] tracking-tight text-center md:text-left max-w-5xl">
-               Web Developer & Project Manager. I transform complex ideas into simple, scalable digital products.
+                Web Developer & Project Manager. I transform complex ideas into simple, scalable digital products.
               </h2>
             </RevealItem>
           </div>
@@ -347,9 +342,9 @@ function App() {
                     <RevealItem className="reveal-blur absolute -bottom-4 left-0 w-24 h-2 bg-brand-primary/20 rounded-full" delay="delay-500" />
                   </div>
                 </RevealItem>
-                
+
                 <RevealItem delay="delay-300">
-                  <button 
+                  <button
                     onClick={() => scrollToSection('contact')}
                     className="mt-8 group relative flex items-center gap-6 bg-black text-white px-10 py-5 rounded-full font-outfit font-bold transition-all duration-500 hover:pr-14 hover:bg-brand-primary hover:text-black overflow-hidden shadow-2xl cursor-pointer"
                   >
@@ -364,9 +359,9 @@ function App() {
               </div>
 
               <div className="flex flex-col gap-8 relative">
-                <div 
+                <div
                   className="absolute -right-20 -top-20 w-64 h-64 bg-brand-primary/5 rounded-full blur-3xl pointer-events-none"
-                  style={{ 
+                  style={{
                     transform: 'translate(var(--about-glow-x, 0px), var(--about-glow-y, 0px))'
                   }}
                 />
@@ -383,7 +378,7 @@ function App() {
                   </RevealItem>
                 </div>
                 <RevealItem delay="delay-600" className="self-end -mt-2">
-                  <button 
+                  <button
                     className="group inline-flex items-center gap-2.5 text-black/70 hover:text-black font-outfit font-bold text-sm tracking-wide transition-colors duration-300 relative py-1 cursor-pointer"
                   >
                     <span>Know more about me</span>
@@ -407,12 +402,11 @@ function App() {
       <Contact />
 
       {/* Sleek Glassmorphism Fullscreen Menu Overlay */}
-      <div 
-        className={`fixed inset-0 z-[90] flex items-center justify-center transition-[opacity,visibility] duration-500 ease-in-out will-change-[opacity] ${
-          menuOpen 
-            ? 'opacity-100 pointer-events-auto backdrop-blur-xl bg-black/95 visible' 
+      <div
+        className={`fixed inset-0 z-[90] flex items-center justify-center transition-[opacity,visibility] duration-500 ease-in-out will-change-[opacity] ${menuOpen
+            ? 'opacity-100 pointer-events-auto backdrop-blur-xl bg-black/95 visible'
             : 'opacity-0 pointer-events-none backdrop-blur-none bg-transparent invisible'
-        }`}
+          }`}
       >
         {/* Animated Background decorative shapes */}
         <div className={`absolute top-1/4 left-1/4 w-96 h-96 bg-brand-primary/10 rounded-full blur-[120px] pointer-events-none will-change-transform transition-transform duration-[1200ms] ease-out ${menuOpen ? 'scale-100 translate-x-10' : 'scale-50 translate-x-0'}`} />
@@ -435,16 +429,14 @@ function App() {
                   onClick={() => scrollToSection(sec.id)}
                   className="group flex items-baseline gap-6 text-left w-full focus:outline-none cursor-pointer"
                 >
-                  <span className={`text-xs md:text-sm font-outfit font-bold tracking-widest transition-colors duration-300 ${
-                    isActive ? 'text-brand-primary' : 'text-white/30 group-hover:text-white/60'
-                  }`}>
+                  <span className={`text-xs md:text-sm font-outfit font-bold tracking-widest transition-colors duration-300 ${isActive ? 'text-brand-primary' : 'text-white/30 group-hover:text-white/60'
+                    }`}>
                     {sec.num}
                   </span>
-                  <span className={`text-4xl md:text-6xl lg:text-7xl font-syne font-bold tracking-tight transition-all duration-500 ${
-                    isActive 
-                      ? 'text-brand-primary translate-x-4' 
+                  <span className={`text-4xl md:text-6xl lg:text-7xl font-syne font-bold tracking-tight transition-all duration-500 ${isActive
+                      ? 'text-brand-primary translate-x-4'
                       : 'text-white group-hover:text-brand-primary group-hover:translate-x-4'
-                  }`}>
+                    }`}>
                     {sec.name}
                   </span>
                   {isActive && (

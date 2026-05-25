@@ -159,7 +159,6 @@ function App() {
   // UI colors (text/lines) transition from white (255) to black (0)
   const uiValue = (1 - easedProgress) * 255;
   const uiColor = `rgb(${uiValue}, ${uiValue}, ${uiValue})`;
-  const uiColorAlpha = `rgba(${uiValue}, ${uiValue}, ${uiValue}, 0.7)`;
 
   return (
     <div
@@ -404,8 +403,8 @@ function App() {
       {/* Sleek Glassmorphism Fullscreen Menu Overlay */}
       <div
         className={`fixed inset-0 z-[90] flex items-center justify-center transition-[opacity,visibility] duration-500 ease-in-out will-change-[opacity] ${menuOpen
-            ? 'opacity-100 pointer-events-auto backdrop-blur-xl bg-black/95 visible'
-            : 'opacity-0 pointer-events-none backdrop-blur-none bg-transparent invisible'
+          ? 'opacity-100 pointer-events-auto backdrop-blur-xl bg-black/95 visible'
+          : 'opacity-0 pointer-events-none backdrop-blur-none bg-transparent invisible'
           }`}
       >
         {/* Animated Background decorative shapes */}
@@ -434,8 +433,8 @@ function App() {
                     {sec.num}
                   </span>
                   <span className={`text-4xl md:text-6xl lg:text-7xl font-syne font-bold tracking-tight transition-all duration-500 ${isActive
-                      ? 'text-brand-primary translate-x-4'
-                      : 'text-white group-hover:text-brand-primary group-hover:translate-x-4'
+                    ? 'text-brand-primary translate-x-4'
+                    : 'text-white group-hover:text-brand-primary group-hover:translate-x-4'
                     }`}>
                     {sec.name}
                   </span>

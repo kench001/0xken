@@ -3,6 +3,9 @@ import { createPortal } from 'react-dom';
 import feasifyPreview from './assets/feasify-landing-page.png';
 import attendscanPreview from './assets/attendscan_preview.png';
 import universityHuntPreview from './assets/universityhunt.png';
+import riseOfBakunawaPreview from './assets/Rise of bakunawa.jpg';
+import basePhPreview from './assets/basePh.jpg';
+import blockchainCampusPreview from './assets/Blockchain campus conference.jpg';
 import ProjectPreview from './projectpreview';
 import type { ProjectData } from './projectpreview';
 
@@ -51,26 +54,74 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
   const [isHovered, setIsHovered] = useState(false);
   const [isTitleHovered, setIsTitleHovered] = useState(false);
 
+  const portalRef = useRef<HTMLDivElement>(null);
+  const currentRef = useRef({ x: 0, y: 0 });
+  const targetRef = useRef({ x: 0, y: 0 });
+  const velocityRef = useRef({ x: 0, y: 0 });
+  const prevPosRef = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number>(0);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
+    const nx = e.clientX, ny = e.clientY;
+    velocityRef.current = { x: nx - prevPosRef.current.x, y: ny - prevPosRef.current.y };
+    prevPosRef.current = { x: nx, y: ny };
+    targetRef.current = { x: nx, y: ny };
     setMousePos({
-      x: e.clientX,
-      y: e.clientY,
-      localX: e.clientX - rect.left,
-      localY: e.clientY - rect.top,
+      x: nx, y: ny,
+      localX: nx - rect.left,
+      localY: ny - rect.top,
     });
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsHovered(true);
     const rect = e.currentTarget.getBoundingClientRect();
+    const nx = e.clientX, ny = e.clientY;
+    prevPosRef.current = { x: nx, y: ny };
+    targetRef.current = { x: nx, y: ny };
+    currentRef.current = { x: nx, y: ny };
+    velocityRef.current = { x: 0, y: 0 };
     setMousePos({
-      x: e.clientX,
-      y: e.clientY,
-      localX: e.clientX - rect.left,
-      localY: e.clientY - rect.top,
+      x: nx, y: ny,
+      localX: nx - rect.left,
+      localY: ny - rect.top,
     });
   };
+
+  useEffect(() => {
+    if (!isHovered || isTitleHovered || !image) {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
+      return;
+    }
+
+    const animate = () => {
+      const c = currentRef.current;
+      const t = targetRef.current;
+      c.x += (t.x - c.x) * 0.12;
+      c.y += (t.y - c.y) * 0.12;
+
+      if (portalRef.current) {
+        const vel = velocityRef.current;
+        const ox = Math.max(-30, Math.min(30, vel.x * -0.35));
+        const oy = Math.max(-30, Math.min(30, vel.y * -0.35));
+        portalRef.current.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) rotate(-2deg)`;
+        portalRef.current.style.left = `${c.x}px`;
+        portalRef.current.style.top = `${c.y}px`;
+      }
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isHovered, isTitleHovered, image]);
 
   return (
     <div
@@ -132,13 +183,14 @@ const ProjectItem = React.memo(({ number, title, category, description, image, c
 
       {image && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed pointer-events-none z-[9999] transition-all duration-500 ease-out hidden md:block"
+          ref={portalRef}
+          className="fixed pointer-events-none z-[9999] will-change-transform hidden md:block"
           style={{
             left: mousePos.x,
             top: mousePos.y,
-            transform: `translate(-50%, -50%) rotate(${isHovered && !isTitleHovered ? '-2deg' : '0deg'})`,
             opacity: isHovered && !isTitleHovered ? 1 : 0,
             visibility: isHovered && !isTitleHovered ? 'visible' : 'hidden',
+            transition: 'opacity 0.4s ease-out, visibility 0.4s ease-out',
           }}
         >
           <div className={`w-80 lg:w-[450px] overflow-hidden rounded-2xl shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] border border-black/10 bg-white transition-all duration-500 ease-out ${isHovered && !isTitleHovered ? 'scale-100' : 'scale-90'}`}>
@@ -211,17 +263,19 @@ export const Projects = React.memo(() => {
 
   const experiences = [
     {
-      number: '2024 - Present',
-      title: 'Project Manager',
-      category: 'Game Dev',
+      number: '2026',
+      title: 'Game Dev',
+      category: 'Project Manager',
       description: 'Leading cross-functional teams in developing immersive gaming experiences and interactive media projects.',
+      image: riseOfBakunawaPreview,
       color: 'rgba(0, 255, 170, 0.05)'
     },
     {
       number: '2022 - 2024',
-      title: 'Hosted',
-      category: 'Sui',
+      title: 'BasePh',
+      category: 'Blockchain',
       description: 'Building scalable infrastructure and developer tools to enhance the ecosystem on the Sui blockchain.',
+      image: basePhPreview,
       color: 'rgba(0, 204, 255, 0.05)'
     },
     {
@@ -229,6 +283,7 @@ export const Projects = React.memo(() => {
       title: 'Volunteer',
       category: 'Blockchain Campus Conference',
       description: 'Organizing and facilitating large-scale educational events to foster blockchain adoption in academic communities.',
+      image: blockchainCampusPreview,
       color: 'rgba(255, 170, 0, 0.05)'
     },
   ];

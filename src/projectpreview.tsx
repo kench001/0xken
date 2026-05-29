@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, startTransition } from 'react';
 
 export interface ProjectData {
     number: string;
@@ -21,45 +21,77 @@ export interface ProjectPreviewProps {
 }
 
 export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose }) => {
+    const [animState, setAnimState] = useState({
+        visible: false,
+        open: false,
+        cachedProject: null as ProjectData | null,
+    });
     const onCloseRef = useRef(onClose);
-    onCloseRef.current = onClose;
+    const hasShown = useRef(false);
 
-    // Lock body scroll and handle Lenis
     useEffect(() => {
-        const lenis = (window as any).lenis;
-        const originalHtml = document.documentElement.style.overflow;
-        const originalBody = document.body.style.overflow;
+        onCloseRef.current = onClose;
+    });
 
+    useEffect(() => {
         if (project) {
+            startTransition(() => {
+                setAnimState({ visible: true, open: false, cachedProject: project });
+            });
+            hasShown.current = true;
+            const raf = requestAnimationFrame(() => {
+                requestAnimationFrame(() => setAnimState(prev => ({ ...prev, open: true })));
+            });
+            return () => cancelAnimationFrame(raf);
+        } else if (hasShown.current) {
+            startTransition(() => {
+                setAnimState(prev => ({ ...prev, open: false }));
+            });
+        }
+    }, [project]);
+
+    useEffect(() => {
+        if (!animState.open && animState.visible) {
+            const timer = setTimeout(() => setAnimState(prev => ({ ...prev, visible: false })), 700);
+            return () => clearTimeout(timer);
+        }
+    }, [animState.open, animState.visible]);
+
+    useEffect(() => {
+        const lenis = (window as unknown as { lenis?: { stop: () => void; start: () => void } }).lenis;
+        if (animState.visible) {
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             if (lenis) lenis.stop();
         }
+        return () => {
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+            if (lenis) lenis.start();
+        };
+    }, [animState.visible]);
 
+    useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 onCloseRef.current();
             }
         };
         window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
-        return () => {
-            document.documentElement.style.overflow = originalHtml;
-            document.body.style.overflow = originalBody;
-            if (lenis) lenis.start();
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [project]);
+    if (!animState.visible) return null;
 
-    if (!project) return null;
+    const displayProject = project || animState.cachedProject;
+    if (!displayProject) return null;
 
-    // Enhance the color glow for the shadow
-    const glowColor = project.color.replace(/0\.\d+\)/, '0.25)');
+    const glowColor = displayProject.color.replace(/0\.\d+\)/, '0.25)');
 
     return (
         <div
             data-lenis-prevent
-            className="fixed inset-0 z-[120] bg-black/95 backdrop-blur-md overflow-y-auto text-white transition-opacity duration-500 animate-fade-in"
+            className={`fixed inset-0 z-[120] bg-black/95 backdrop-blur-md overflow-y-auto text-white transition-all duration-700 ease-out ${animState.open ? 'translate-y-0' : 'translate-y-full'}`}
             style={{ scrollbarWidth: 'thin', overscrollBehavior: 'contain' }}
         >
             {/* Top Close Button (X) */}
@@ -77,11 +109,11 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                 {/* Title and external link */}
                 <div className="flex items-center gap-6 mt-8">
                     <h2 className="text-5xl md:text-7xl lg:text-8xl font-syne font-bold tracking-tight">
-                        {project.title}
+                        {displayProject.title}
                     </h2>
-                    {project.projectUrl && (
+                    {displayProject.projectUrl && (
                         <a
-                            href={project.projectUrl}
+                            href={displayProject.projectUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-white/50 hover:text-white transition-all duration-300 transform hover:translate-x-1 hover:-translate-y-1"
@@ -103,7 +135,7 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                         </span>
                         <div className="w-full h-px bg-white/10 mt-3 mb-6" />
                         <p className="text-base md:text-lg text-white/70 font-outfit leading-relaxed">
-                            {project.detailedDescription || project.description}
+                            {displayProject.detailedDescription || displayProject.description}
                         </p>
                     </div>
 
@@ -114,16 +146,16 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                         </span>
                         <div className="w-full h-px bg-white/10 mt-3 mb-6" />
                         <div className="flex flex-col gap-2 text-base md:text-lg text-white/70 font-outfit leading-relaxed">
-                            {project.technologies?.frontend && (
+                            {displayProject.technologies?.frontend && (
                                 <div>
                                     <span className="text-white/40 font-semibold">Frontend: </span>
-                                    <span>{project.technologies.frontend}</span>
+                                    <span>{displayProject.technologies.frontend}</span>
                                 </div>
                             )}
-                            {project.technologies?.backend && (
+                            {displayProject.technologies?.backend && (
                                 <div>
                                     <span className="text-white/40 font-semibold">Backend: </span>
-                                    <span>{project.technologies.backend}</span>
+                                    <span>{displayProject.technologies.backend}</span>
                                 </div>
                             )}
                         </div>
@@ -138,8 +170,8 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                     }}
                 >
                     <img
-                        src={project.image}
-                        alt={`${project.title} detailed preview`}
+                        src={displayProject.image}
+                        alt={`${displayProject.title} detailed preview`}
                         className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
                     />
                 </div>

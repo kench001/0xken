@@ -3,6 +3,7 @@ import Lenis from 'lenis';
 import Projects from './projects';
 import Contact from './contacts';
 import resumePdf from './assets/Kench_Justin_Loyola_Resume.pdf';
+import MoreAboutMe from './more_aboutme';
 
 
 // Component for scroll reveal animation
@@ -43,6 +44,31 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showMoreAboutMe, setShowMoreAboutMe] = useState(false);
+  const savedScrollPosition = useRef(0);
+
+  const handleOpenTimeline = () => {
+    savedScrollPosition.current = window.scrollY;
+    setShowMoreAboutMe(true);
+    window.scrollTo(0, 0);
+    const lenis = (window as any).lenis;
+    if (lenis) {
+      lenis.resize();
+    }
+  };
+
+  const handleCloseTimeline = () => {
+    setShowMoreAboutMe(false);
+    requestAnimationFrame(() => {
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.resize();
+        lenis.scrollTo(savedScrollPosition.current, { immediate: true });
+      } else {
+        window.scrollTo(0, savedScrollPosition.current);
+      }
+    });
+  };
 
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
@@ -165,9 +191,10 @@ function App() {
     <div
       ref={containerRef}
       className="selection:bg-brand-primary selection:text-black min-h-screen"
-      style={{ backgroundColor: bgColor }}
+      style={{ backgroundColor: showMoreAboutMe ? 'black' : bgColor }}
     >
-      {/* Hero Section - UNTOUCHED CONTENT */}
+      <div style={{ display: showMoreAboutMe ? 'none' : 'block' }}>
+        {/* Hero Section - UNTOUCHED CONTENT */}
       <section id="home" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
         {/* Background Layers - Fading out */}
         <div
@@ -392,6 +419,7 @@ function App() {
                 </div>
                 <RevealItem delay="delay-600" className="self-end -mt-2">
                   <button
+                    onClick={handleOpenTimeline}
                     className="group inline-flex items-center gap-2.5 text-black/70 hover:text-black font-outfit font-bold text-sm tracking-wide transition-colors duration-300 relative py-1 cursor-pointer"
                   >
                     <span>Know more about me</span>
@@ -482,6 +510,10 @@ function App() {
           </div>
         </div>
       </div>
+      </div>
+      {showMoreAboutMe && (
+        <MoreAboutMe onClose={handleCloseTimeline} />
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import Projects from './projects';
 import Contact from './contacts';
+import resumePdf from './assets/Kench_Justin_Loyola_Resume.pdf';
 
 
 // Component for scroll reveal animation
@@ -342,18 +343,31 @@ function App() {
                   </div>
                 </RevealItem>
 
-                <RevealItem delay="delay-300">
+                <RevealItem delay="delay-300" className="mt-8 flex flex-wrap items-center gap-4">
                   <button
                     onClick={() => scrollToSection('contact')}
-                    className="mt-8 group relative flex items-center gap-6 bg-black text-white px-10 py-5 rounded-full font-outfit font-bold transition-all duration-500 hover:pr-14 hover:bg-brand-primary hover:text-black overflow-hidden shadow-2xl cursor-pointer"
+                    className="group relative flex items-center gap-5 bg-black text-white px-7 py-3.5 rounded-full font-outfit font-bold transition-all duration-500 hover:pr-11 hover:bg-brand-primary hover:text-black overflow-hidden shadow-2xl cursor-pointer"
                   >
                     <span className="relative z-10">Get in Touch</span>
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10 transition-all duration-500 group-hover:translate-x-2">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 transition-all duration-500 group-hover:translate-x-1.5">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </div>
                   </button>
+
+                  <a
+                    href={resumePdf}
+                    download="Kench_Justin_Loyola_Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 border border-brand-primary text-black px-7 py-3.5 rounded-full font-outfit font-bold transition-all duration-500 hover:bg-brand-primary hover:text-black hover:border-brand-primary shadow-sm hover:shadow-md cursor-pointer"
+                  >
+                    <span>Download Resume</span>
+                    <svg className="w-4 h-4 transition-transform duration-500 group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </a>
                 </RevealItem>
               </div>
 

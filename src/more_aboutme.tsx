@@ -293,7 +293,7 @@ const MoreAboutMe: React.FC<MoreAboutMeProps> = ({ onClose }) => {
                     <div className="flex flex-col items-center gap-6">
                         <div className="h-12 w-px bg-gradient-to-b from-brand-secondary to-transparent" />
                         <span className="text-xs font-outfit uppercase tracking-[0.4em] text-white/40">
-                            End of Journey
+                            Only the Beginning
                         </span>
                         <button
                             onClick={onClose}

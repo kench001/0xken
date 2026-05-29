@@ -127,7 +127,7 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                 </div>
 
                 {/* Detailed Columns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+                <div className={`grid grid-cols-1 gap-8 md:gap-16 ${displayProject.technologies ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
                     {/* Left Column: Description */}
                     <div className="flex flex-col">
                         <span className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.25em] text-white/40 font-bold">
@@ -139,27 +139,32 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                         </p>
                     </div>
 
-                    {/* Right Column: Technologies */}
+                    {displayProject.technologies && (
                     <div className="flex flex-col">
                         <span className="text-[10px] md:text-xs font-outfit uppercase tracking-[0.25em] text-white/40 font-bold">
                             Technologies
                         </span>
                         <div className="w-full h-px bg-white/10 mt-3 mb-6" />
                         <div className="flex flex-col gap-2 text-base md:text-lg text-white/70 font-outfit leading-relaxed">
-                            {displayProject.technologies?.frontend && (
-                                <div>
-                                    <span className="text-white/40 font-semibold">Frontend: </span>
-                                    <span>{displayProject.technologies.frontend}</span>
-                                </div>
-                            )}
-                            {displayProject.technologies?.backend && (
-                                <div>
-                                    <span className="text-white/40 font-semibold">Backend: </span>
-                                    <span>{displayProject.technologies.backend}</span>
-                                </div>
-                            )}
+                            {displayProject.technologies?.frontend && displayProject.technologies?.backend ? (
+                                <>
+                                    <div>
+                                        <span className="text-white/40 font-semibold">Frontend: </span>
+                                        <span>{displayProject.technologies.frontend}</span>
+                                    </div>
+                                    <div>
+                                        <span className="text-white/40 font-semibold">Backend: </span>
+                                        <span>{displayProject.technologies.backend}</span>
+                                    </div>
+                                </>
+                            ) : displayProject.technologies?.frontend ? (
+                                <span>{displayProject.technologies.frontend}</span>
+                            ) : displayProject.technologies?.backend ? (
+                                <span>{displayProject.technologies.backend}</span>
+                            ) : null}
                         </div>
                     </div>
+                    )}
                 </div>
 
                 {/* Glowing Project Image Preview */}

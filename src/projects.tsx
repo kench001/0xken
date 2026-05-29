@@ -226,8 +226,8 @@ export const Projects = React.memo(() => {
       image: feasifyPreview,
       color: 'rgba(0, 255, 170, 0.08)',
       technologies: {
-        frontend: 'React, TypeScript, TailwindCSS, Framer Motion',
-        backend: 'Node.js, Express, MongoDB, Mongoose, JWT'
+        frontend: 'React, TypeScript, TailwindCSS',
+        backend: 'N/A (Static Web)'
       },
       projectUrl: 'https://feasify.com'
     },
@@ -236,26 +236,26 @@ export const Projects = React.memo(() => {
       title: 'AttendScan',
       category: 'Lead Dev',
       description: 'Smart attendance tracking system using QR codes and real-time analytics for educational institutions and events.',
-      detailedDescription: 'AttendScan is a smart, mobile-first attendance management system designed to eliminate manual sign-ins. Users generate unique, dynamic QR codes, which attendees scan to check in instantly. The admin dashboard features real-time tracking, geolocation validation to prevent fraud, and comprehensive PDF/CSV report exports for simple integration with academic or corporate databases.',
+      detailedDescription: 'AttendScan is a smart, mobile-first attendance management system designed to eliminate manual sign-ins. Users generate unique, dynamic QR codes, which attendees scan to check in instantly. The admin dashboard features real-time tracking, geolocation validation to prevent fraud, and comprehensive PDF/CSV report exports for simple integration with academic or corporate databases. The platform was rebuilt from React Native + Expo to React + TypeScript with a Firebase (NoSQL) backend for scalable real-time data management.',
       image: attendscanPreview,
       color: 'rgba(0, 204, 255, 0.08)',
       technologies: {
-        frontend: 'React Native, Expo, TailwindCSS, Chart.js',
-        backend: 'Firebase, Cloud Functions, Firestore Auth'
+        frontend: 'React, TypeScript, TailwindCSS, Chart.js',
+        backend: 'Firebase (NoSQL)'
       },
       projectUrl: 'https://attendscan.com'
     },
     {
       number: '03',
       title: 'University-Hunt',
-      category: 'Frontend Development',
+      category: 'Fullstack Developer',
       description: 'A specialized search engine and platform helping students discover and compare universities across metro manila.',
       detailedDescription: 'University-Hunt is a comprehensive portal and search engine designed to assist incoming college students in navigating educational options in Metro Manila. The platform offers advanced filtering by program, tuition range, location, and facility reviews. It also includes an interactive comparison matrix and virtual map integrations to help students plan their academic future.',
       image: universityHuntPreview,
       color: 'rgba(255, 100, 255, 0.08)',
       technologies: {
-        frontend: 'React, Next.js, TailwindCSS, Mapbox API',
-        backend: 'Express, PostgreSQL, Prisma, Algolia Search'
+        frontend: 'React, TypeScript, TailwindCSS, Mapbox API',
+        backend: 'N/A (Static Web)'
       },
       projectUrl: 'https://universityhunt.com'
     },
@@ -266,23 +266,29 @@ export const Projects = React.memo(() => {
       number: '2026',
       title: 'Game Dev',
       category: 'Project Manager',
-      description: 'Leading cross-functional teams in developing immersive gaming experiences and interactive media projects.',
+      description: 'A PVP TCG game with two factions — Tribesmen vs Bakunawa — as they battle to prevent the moon from being devoured.',
+      detailedDescription: 'Rise of the Bakunawa — a PVP TCG game where two factions (Tribesmen vs Bakunawa) battle to prevent the moon from being devoured. Awarded 1st Place in People\'s Choice with 100+ players in a one-day university event.',
       image: riseOfBakunawaPreview,
-      color: 'rgba(0, 255, 170, 0.05)'
+      color: 'rgba(0, 255, 170, 0.05)',
+      technologies: {
+        frontend: 'Unity, C#, 3Ds, Adobe Photoshop'
+      }
     },
     {
-      number: '2022 - 2024',
+      number: '2025',
       title: 'BasePh',
       category: 'Blockchain',
-      description: 'Building scalable infrastructure and developer tools to enhance the ecosystem on the Sui blockchain.',
+      description: 'Onboarding Filipinos into the Base ecosystem through community-driven advocacy and grassroots education.',
+      detailedDescription: 'BasePh is the Philippine community for Base — a Layer 2 blockchain built by Coinbase that provides a secure, low-cost, and developer-friendly platform for building decentralized applications. As a contributor to BasePh, I help onboard and empower Filipino developers, creators, and users into the Base ecosystem through community engagement, educational content, and grassroots advocacy. Our mission is to bridge the global Base network with the local Filipino blockchain community, driving adoption and collaboration across the region.',
       image: basePhPreview,
       color: 'rgba(0, 204, 255, 0.05)'
     },
     {
-      number: '2021 - 2022',
+      number: '2024',
       title: 'Volunteer',
       category: 'Blockchain Campus Conference',
       description: 'Organizing and facilitating large-scale educational events to foster blockchain adoption in academic communities.',
+      detailedDescription: 'Served as a core volunteer for the Blockchain Campus Conference, a large-scale educational event aimed at introducing blockchain technology to students and faculty across multiple universities. Responsibilities included coordinating event logistics, managing on-ground operations, facilitating workshop sessions, and assisting speakers and attendees throughout the conference. The event successfully brought together hundreds of participants, featuring keynote talks, panel discussions, and hands-on workshops that covered blockchain fundamentals, decentralized applications, and real-world use cases — helping bridge the gap between academic communities and the emerging blockchain ecosystem.',
       image: blockchainCampusPreview,
       color: 'rgba(255, 170, 0, 0.05)'
     },
@@ -327,7 +333,7 @@ export const Projects = React.memo(() => {
             <RevealItem key={`${activeTab}-${index}`} delay={`delay-${(index + 1) * 100}`}>
               <ProjectItem
                 {...item}
-                onClick={activeTab === 'projects' ? () => setSelectedProject(item as ProjectData) : undefined}
+                onClick={() => setSelectedProject(item as unknown as ProjectData)}
               />
             </RevealItem>
           ))}

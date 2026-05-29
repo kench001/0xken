@@ -223,7 +223,13 @@ const MoreAboutMe: React.FC<MoreAboutMeProps> = ({ onClose }) => {
                                     <div className="w-full md:w-1/2" />
 
                                     {/* Content Card Container */}
-                                    <div className="w-full md:w-1/2 pl-12 md:pl-0 pr-0 md:px-16 flex justify-start">
+                                    <div
+                                        className={`w-full md:w-1/2 pl-12 pr-0 flex justify-start ${
+                                            index % 2 === 0
+                                                ? 'md:pl-0 md:pr-16 md:justify-end'
+                                                : 'md:pl-16 md:pr-0'
+                                        }`}
+                                    >
                                         <TimelineReveal
                                             className={index % 2 === 0 ? 'reveal-left' : 'reveal-right'}
                                         >

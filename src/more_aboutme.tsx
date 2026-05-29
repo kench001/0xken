@@ -88,16 +88,18 @@ const MoreAboutMe: React.FC<MoreAboutMeProps> = ({ onClose }) => {
     ];
 
     useEffect(() => {
-        // Scroll to top on mount
         window.scrollTo(0, 0);
-
-        // Resize Lenis if it exists
         const lenis = (window as any).lenis;
         if (lenis) {
+            lenis.scrollTo(0, { immediate: true });
             lenis.resize();
         }
 
         const handleScroll = () => {
+            if (window.scrollY === 0) {
+                setScrollProgress(0);
+                return;
+            }
             if (!trackRef.current) return;
             const trackRect = trackRef.current.getBoundingClientRect();
             const windowHeight = window.innerHeight;
@@ -114,11 +116,22 @@ const MoreAboutMe: React.FC<MoreAboutMeProps> = ({ onClose }) => {
         };
 
         window.addEventListener('scroll', handleScroll);
-        // Trigger scroll check on mount and resize
-        handleScroll();
+        
+        // Defer initial scroll and layout check to ensure layout settles and is reset to 0
+        const timeoutId = setTimeout(() => {
+            const currentLenis = (window as any).lenis;
+            if (currentLenis) {
+                currentLenis.scrollTo(0, { immediate: true });
+                currentLenis.resize();
+            } else {
+                window.scrollTo(0, 0);
+            }
+            handleScroll();
+        }, 50);
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
+            clearTimeout(timeoutId);
         };
     }, []);
 

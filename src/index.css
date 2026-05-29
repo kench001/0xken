@@ -178,4 +178,33 @@ html.lenis body {
   box-shadow: none !important;
 }
 
+/* Page Sweep Transition Overlay */
+.swipe-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #080808;
+  transform: translateY(100%);
+  pointer-events: none;
+  transition: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swipe-overlay.active {
+  pointer-events: auto;
+}
+
+.swipe-overlay.cover {
+  transform: translateY(0);
+  transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.swipe-overlay.reveal {
+  transform: translateY(-100%);
+  transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+
 

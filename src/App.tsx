@@ -46,24 +46,47 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showMoreAboutMe, setShowMoreAboutMe] = useState(false);
   const savedScrollPosition = useRef(0);
+  const [transitionStep, setTransitionStep] = useState<'idle' | 'covering' | 'revealing'>('idle');
+
+  const triggerTransition = (onMidpoint: () => void) => {
+    if (transitionStep !== 'idle') return;
+    
+    setTransitionStep('covering');
+    
+    setTimeout(() => {
+      onMidpoint();
+      setTransitionStep('revealing');
+      
+      setTimeout(() => {
+        setTransitionStep('idle');
+      }, 800);
+    }, 800);
+  };
 
   const handleOpenTimeline = () => {
-    savedScrollPosition.current = window.scrollY;
-    setShowMoreAboutMe(true);
-    window.scrollTo(0, 0);
-    const lenis = (window as any).lenis;
-    if (lenis) {
-      lenis.resize();
-    }
+    triggerTransition(() => {
+      savedScrollPosition.current = window.scrollY;
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+        lenis.start();
+        lenis.resize();
+      }
+      window.scrollTo(0, 0);
+      setShowMoreAboutMe(true);
+    });
   };
 
   const handleCloseTimeline = () => {
-    setShowMoreAboutMe(false);
-    requestAnimationFrame(() => {
+    triggerTransition(() => {
+      setShowMoreAboutMe(false);
       const lenis = (window as any).lenis;
       if (lenis) {
-        lenis.resize();
-        lenis.scrollTo(savedScrollPosition.current, { immediate: true });
+        lenis.start();
+        requestAnimationFrame(() => {
+          lenis.resize();
+          lenis.scrollTo(savedScrollPosition.current, { immediate: true });
+        });
       } else {
         window.scrollTo(0, savedScrollPosition.current);
       }
@@ -514,6 +537,17 @@ function App() {
       {showMoreAboutMe && (
         <MoreAboutMe onClose={handleCloseTimeline} />
       )}
+      
+      {/* Swipe Transition Overlay */}
+      <div 
+        className={`swipe-overlay ${
+          transitionStep === 'covering' ? 'active cover' : 
+          transitionStep === 'revealing' ? 'active reveal' : ''
+        }`}
+      >
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-primary to-transparent opacity-90 blur-[0.5px]" />
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-40" />
+      </div>
     </div>
   );
 }

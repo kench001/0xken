@@ -7,6 +7,8 @@
   
   --color-brand-primary: #00ffaa;
   --color-brand-secondary: #00ccff;
+  
+  --breakpoint-xs: 380px;
 }
 
 :root {
@@ -190,6 +192,7 @@ html.lenis body {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .swipe-overlay.active {
@@ -204,6 +207,177 @@ html.lenis body {
 .swipe-overlay.reveal {
   transform: translateY(-100%);
   transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* Page Split Transition Overlay */
+.split-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  overflow: hidden;
+}
+
+.split-overlay.active {
+  pointer-events: auto;
+}
+
+.split-panel {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50.5%;
+  background: #080808;
+  transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+}
+
+.split-left {
+  left: 0;
+  transform: translateX(-100%);
+}
+
+.split-left.covering {
+  transform: translateX(0);
+}
+
+.split-left.revealing {
+  transform: translateX(-100%);
+}
+
+.split-right {
+  right: 0;
+  transform: translateX(100%);
+}
+
+.split-right.covering {
+  transform: translateX(0);
+}
+
+.split-right.revealing {
+  transform: translateX(100%);
+}
+
+/* Glowing center split line */
+.split-center-line {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--color-brand-primary), var(--color-brand-secondary), transparent);
+  transform: translate(-50%, 0) scaleY(0);
+  transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.5s ease;
+  z-index: 10000;
+  box-shadow: 0 0 15px var(--color-brand-primary);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.split-center-line.covering {
+  transform: translate(-50%, 0) scaleY(1);
+  opacity: 1;
+}
+
+.split-center-line.revealing {
+  transform: translate(-50%, 0) scaleY(0);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.4s ease;
+}
+
+/* Chatbot Animations & Utilities */
+@keyframes msgFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-message {
+  animation: msgFadeIn 0.45s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+}
+
+@keyframes typingBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.dot-bounce {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: currentColor;
+  border-radius: 50%;
+  animation: typingBounce 1s infinite ease-in-out;
+}
+
+.dot-bounce:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dot-bounce:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Chatbot Custom Hardware-Accelerated Smooth Reveal Transitions */
+.chatbot-header-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chatbot-header-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chatbot-converge-reveal {
+  opacity: 0;
+  transform: scale(1.03);
+  letter-spacing: 0.15em;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chatbot-converge-reveal.is-revealed {
+  opacity: 1;
+  transform: scale(1);
+  letter-spacing: normal;
+}
+
+.chatbot-panel-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chatbot-panel-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hide scrollbars cleanly on mobile */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mobile-specific transition overrides & performance tweaks */
+@media (max-w: 1024px) {
+  .chatbot-header-reveal,
+  .chatbot-panel-reveal {
+    transition-duration: 0.5s !important;
+    transform: translateY(15px);
+  }
+  .chatbot-header-reveal.is-revealed,
+  .chatbot-panel-reveal.is-revealed {
+    transform: translateY(0);
+  }
+  /* Disable resource-heavy GPU drifting backdrop animations on mobile devices */
+  .animate-\[drift_25s_ease-in-out_infinite\],
+  .animate-\[drift_30s_ease-in-out_infinite_reverse\] {
+    animation: none !important;
+  }
 }
 
 

@@ -4,6 +4,7 @@ import Projects from './projects';
 import Contact from './contacts';
 import resumePdf from './assets/Kench_Justin_Loyola_Resume.pdf';
 import MoreAboutMe from './more_aboutme';
+import Chatbot from './Chatbot';
 
 
 // Component for scroll reveal animation
@@ -45,8 +46,10 @@ function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
   const [showMoreAboutMe, setShowMoreAboutMe] = useState(false);
+  const [showChatPage, setShowChatPage] = useState(false);
   const savedScrollPosition = useRef(0);
   const [transitionStep, setTransitionStep] = useState<'idle' | 'covering' | 'revealing'>('idle');
+  const [transitionType, setTransitionType] = useState<'swipe' | 'split'>('swipe');
 
   const triggerTransition = (onMidpoint: () => void) => {
     if (transitionStep !== 'idle') return;
@@ -64,6 +67,7 @@ function App() {
   };
 
   const handleOpenTimeline = () => {
+    setTransitionType('swipe');
     triggerTransition(() => {
       savedScrollPosition.current = window.scrollY;
       const lenis = (window as any).lenis;
@@ -78,6 +82,7 @@ function App() {
   };
 
   const handleCloseTimeline = () => {
+    setTransitionType('swipe');
     triggerTransition(() => {
       setShowMoreAboutMe(false);
       const lenis = (window as any).lenis;
@@ -89,6 +94,41 @@ function App() {
         });
       } else {
         window.scrollTo(0, savedScrollPosition.current);
+      }
+    });
+  };
+
+  const handleOpenChat = () => {
+    setTransitionType('split');
+    triggerTransition(() => {
+      savedScrollPosition.current = window.scrollY;
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.stop();
+      }
+      setShowChatPage(true);
+    });
+  };
+
+  const handleCloseChat = () => {
+    setTransitionType('split');
+    triggerTransition(() => {
+      setShowChatPage(false);
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.start();
+        requestAnimationFrame(() => {
+          lenis.resize();
+          const contactSec = document.getElementById('contact');
+          if (contactSec) {
+            lenis.scrollTo(contactSec, { immediate: true });
+          }
+        });
+      } else {
+        const contactSec = document.getElementById('contact');
+        if (contactSec) {
+          contactSec.scrollIntoView();
+        }
       }
     });
   };
@@ -108,6 +148,20 @@ function App() {
     window.addEventListener('mousemove', handleGlobalMouseMove);
     return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
   }, []);
+
+  useEffect(() => {
+    if (showChatPage) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [showChatPage]);
 
   useEffect(() => {
     const sections = ['home', 'about', 'projects', 'contact'];
@@ -214,9 +268,12 @@ function App() {
     <div
       ref={containerRef}
       className="selection:bg-brand-primary selection:text-black min-h-screen"
-      style={{ backgroundColor: showMoreAboutMe ? 'black' : bgColor }}
+      style={{ backgroundColor: (showMoreAboutMe || showChatPage) ? 'black' : bgColor }}
     >
-      <div style={{ display: showMoreAboutMe ? 'none' : 'block' }}>
+      <div 
+        className={(showMoreAboutMe || showChatPage) ? 'hidden' : ''}
+        aria-hidden={showMoreAboutMe || showChatPage}
+      >
         {/* Hero Section - UNTOUCHED CONTENT */}
       <section id="home" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
         {/* Background Layers - Fading out */}
@@ -463,7 +520,7 @@ function App() {
       </section>
 
       <Projects />
-      <Contact />
+      <Contact onOpenChat={handleOpenChat} />
 
       {/* Sleek Glassmorphism Fullscreen Menu Overlay */}
       <div
@@ -537,16 +594,26 @@ function App() {
       {showMoreAboutMe && (
         <MoreAboutMe onClose={handleCloseTimeline} />
       )}
+      {showChatPage && (
+        <Chatbot onClose={handleCloseChat} />
+      )}
       
       {/* Swipe Transition Overlay */}
       <div 
         className={`swipe-overlay ${
-          transitionStep === 'covering' ? 'active cover' : 
-          transitionStep === 'revealing' ? 'active reveal' : ''
+          transitionType === 'swipe' && transitionStep === 'covering' ? 'active cover' : 
+          transitionType === 'swipe' && transitionStep === 'revealing' ? 'active reveal' : ''
         }`}
       >
         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-primary to-transparent opacity-90 blur-[0.5px]" />
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-40" />
+      </div>
+
+      {/* Split Transition Overlay */}
+      <div className={`split-overlay ${transitionType === 'split' && transitionStep !== 'idle' ? 'active' : ''}`}>
+        <div className={`split-panel split-left ${transitionType === 'split' ? transitionStep : ''}`} />
+        <div className={`split-panel split-right ${transitionType === 'split' ? transitionStep : ''}`} />
+        <div className={`split-center-line ${transitionType === 'split' ? transitionStep : ''}`} />
       </div>
     </div>
   );

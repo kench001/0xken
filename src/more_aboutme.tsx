@@ -95,27 +95,51 @@ const MoreAboutMe: React.FC<MoreAboutMeProps> = ({ onClose }) => {
             lenis.resize();
         }
 
-        const handleScroll = () => {
-            if (window.scrollY === 0) {
-                setScrollProgress(0);
-                return;
-            }
+        const handleScroll = (e?: any) => {
             if (!trackRef.current) return;
             const trackRect = trackRef.current.getBoundingClientRect();
             const windowHeight = window.innerHeight;
+            const scrollY = e ? e.scroll : window.scrollY;
+            const docHeight = document.documentElement.scrollHeight;
+            const maxScroll = docHeight - windowHeight;
 
-            // Track relative to viewport
-            // Progress starts when the top of the track enters the middle of the screen
-            // Progress ends when the bottom of the track reaches the middle of the screen
-            const totalTrackHeight = trackRect.height;
-            const trackTopFromMiddle = windowHeight / 2 - trackRect.top;
+            if (maxScroll <= 0) return;
 
-            let progress = trackTopFromMiddle / totalTrackHeight;
+            // Force 100% progress when close to the bottom of the page (within 20px)
+            if (scrollY + windowHeight >= docHeight - 20) {
+                setScrollProgress(1);
+                return;
+            }
+
+            // Absolute positions on page
+            const trackPageTop = trackRect.top + scrollY;
+            const trackPageHeight = trackRect.height;
+
+            const scrollStart = trackPageTop - windowHeight / 2;
+            const scrollEndTarget = trackPageTop + trackPageHeight - windowHeight / 2;
+            // Cap scrollEnd at maxScroll so progress reaches 100% when scrolled to the very bottom
+            const scrollEnd = Math.min(scrollEndTarget, maxScroll);
+
+            if (scrollY === 0) {
+                setScrollProgress(0);
+                return;
+            }
+
+            if (scrollEnd <= scrollStart) {
+                setScrollProgress(scrollY > scrollStart ? 1 : 0);
+                return;
+            }
+
+            let progress = (scrollY - scrollStart) / (scrollEnd - scrollStart);
             progress = Math.max(0, Math.min(1, progress));
             setScrollProgress(progress);
         };
 
-        window.addEventListener('scroll', handleScroll);
+        if (lenis) {
+            lenis.on('scroll', handleScroll);
+        } else {
+            window.addEventListener('scroll', handleScroll);
+        }
         
         // Defer initial scroll and layout check to ensure layout settles and is reset to 0
         const timeoutId = setTimeout(() => {
@@ -130,7 +154,12 @@ const MoreAboutMe: React.FC<MoreAboutMeProps> = ({ onClose }) => {
         }, 50);
 
         return () => {
-            window.removeEventListener('scroll', handleScroll);
+            const currentLenis = (window as any).lenis;
+            if (currentLenis) {
+                currentLenis.off('scroll', handleScroll);
+            } else {
+                window.removeEventListener('scroll', handleScroll);
+            }
             clearTimeout(timeoutId);
         };
     }, []);

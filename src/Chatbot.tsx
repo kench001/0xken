@@ -40,12 +40,27 @@ const FAQ_DATA: FAQCategory[] = [
             {
                 id: 'p2',
                 question: 'What is AttendScan and how did you build it?',
-                answer: 'AttendScan is a smart attendance tracker built with React, TypeScript, and Firebase. It uses dynamic QR codes and includes location validation. I pivoted it from a React Native + Expo structure to web React to optimize real-time dashboard analytics.'
+                answer: 'AttendScan is a mobile-first attendance tracker using dynamic QR codes for instant check-ins. It features real-time dashboard analytics via Chart.js, geolocation validation, and PDF/CSV report exports. The frontend is built with React, TypeScript, and TailwindCSS, powered by a Firebase backend.'
             },
             {
                 id: 'p3',
                 question: 'What are your core technical developer skills?',
                 answer: 'My primary frontend stack is React, TypeScript, and TailwindCSS. For game development, I use Unity and C#. For backend databases, I am highly proficient with Firebase (NoSQL).'
+            },
+            {
+                id: 'p4',
+                question: 'How did you implement AI and RAG in your projects?',
+                answer: 'In Feasify, I integrated the Gemini API with a local RAG pipeline via an Express backend. The system feeds local rubrics and financial knowledge to the model to flag critical business and formatting risks within 3 seconds of draft submission.'
+            },
+            {
+                id: 'p5',
+                question: 'Have you ever built an award-winning game?',
+                answer: 'Yes! I was the Project Manager for "Rise of the Bakunawa", a PVP trading card game. I managed team workflows, ran a QA pipeline that fixed over 10 critical bugs, and optimized the Unity integration to lock a stable 60 FPS. We won 1st Place in People\'s Choice out of 28 competing teams!'
+            },
+            {
+                id: 'p6',
+                question: 'How did you optimize AttendScan for speed and low-end devices?',
+                answer: 'I engineered a hybrid QR scanning module wrapping html5-qrcode to achieve check-ins in under 2 seconds, and developed an optimized dashboard caching system that keeps analytics responsive for up to 350+ records on low-end mobile devices.'
             }
         ]
     },
@@ -60,8 +75,8 @@ const FAQ_DATA: FAQCategory[] = [
         questions: [
             {
                 id: 'c1',
-                question: 'Are you currently looking for full-time job roles?',
-                answer: 'Yes! I am actively looking for positions where I can bring value as a Frontend Web Developer, Fullstack Engineer, or Associate Project Manager.'
+                question: 'Are you currently looking for internships or OJT roles?',
+                answer: 'Yes! I am actively seeking an internship or OJT position to gain industry-standard experience. My target roles are Associate Project Manager and Web Developer.'
             },
             {
                 id: 'c2',
@@ -306,7 +321,7 @@ export const Chatbot: React.FC<ChatbotProps> = React.memo(({ onClose }) => {
                 <RevealItem className="chatbot-panel-reveal w-full" delay="delay-300" forceVisible={animateIn}>
                     <div className="w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-4 md:p-8 flex flex-col lg:flex-row gap-4 lg:gap-8 text-left shadow-2xl h-[calc(100dvh-130px)] min-h-[460px] lg:h-[530px]">
                         {/* Left Column: Control Panel */}
-                        <div className="w-full lg:w-2/5 flex flex-col h-[180px] lg:h-full gap-3 lg:gap-6 justify-between overflow-hidden shrink-0">
+                        <div className={`w-full lg:w-2/5 flex flex-col ${displayedCat === 'projects' ? 'h-[240px] sm:h-[210px]' : 'h-[180px]'} lg:h-full gap-3 lg:gap-6 justify-between overflow-hidden shrink-0`}>
                             {/* Category Tabs */}
                             <div className="grid grid-cols-3 lg:flex lg:flex-col gap-1 sm:gap-1.5 md:gap-2 pb-2.5 lg:pb-0 border-b lg:border-b-0 border-white/5 shrink-0">
                                 {FAQ_DATA.map(cat => (
@@ -330,7 +345,7 @@ export const Chatbot: React.FC<ChatbotProps> = React.memo(({ onClose }) => {
                             {/* Questions List */}
                             <div className="flex flex-col gap-1.5 flex-1 min-h-0 overflow-hidden">
                                 <span className="text-[9px] lg:text-[10px] uppercase tracking-[0.25em] text-white/40 font-bold block px-2 mb-0.5 shrink-0">Select a Question</span>
-                                <div className="flex flex-col gap-1.5 overflow-y-auto pr-1 flex-1 scrollbar-none">
+                                <div className={`${displayedCat === 'projects' ? 'grid grid-cols-2' : 'flex flex-col'} lg:flex lg:flex-col gap-1.5 overflow-y-auto pr-1 flex-1 scrollbar-none`}>
                                     {currentQuestions.map((q, index) => {
                                         const isClicked = clickedIds.has(q.id);
                                         return (
@@ -341,7 +356,7 @@ export const Chatbot: React.FC<ChatbotProps> = React.memo(({ onClose }) => {
                                                 style={{
                                                     transitionDelay: isTransitioningCat ? '0ms' : `${index * 60}ms`
                                                 }}
-                                                className={`group w-full text-left p-2.5 lg:p-3.5 rounded-xl lg:rounded-2xl text-[11px] lg:text-xs font-outfit leading-relaxed border transition-all duration-[350ms] transform active:scale-[0.98] hover:translate-x-1 cursor-pointer shrink-0 ${isTransitioningCat
+                                                className={`group w-full text-left p-2 sm:p-2.5 lg:p-3.5 rounded-xl lg:rounded-2xl text-[10px] sm:text-[11px] lg:text-xs font-outfit leading-relaxed border transition-all duration-[350ms] transform active:scale-[0.98] hover:translate-x-1 cursor-pointer shrink-0 ${isTransitioningCat
                                                     ? 'opacity-0 -translate-y-2 scale-[0.98] pointer-events-none'
                                                     : 'opacity-100 translate-y-0 scale-100'
                                                     } ${isTyping

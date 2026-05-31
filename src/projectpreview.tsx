@@ -7,6 +7,7 @@ export interface ProjectData {
     description: string;
     detailedDescription?: string;
     image: string;
+    video?: string;
     color: string;
     technologies?: {
         frontend?: string;
@@ -244,11 +245,22 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                         boxShadow: `0 0 60px -15px ${glowColor}`
                     }}
                 >
-                    <img
-                        src={displayProject.image}
-                        alt={`${displayProject.title} detailed preview`}
-                        className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
-                    />
+                    {displayProject.video ? (
+                        <video
+                            src={displayProject.video}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
+                        />
+                    ) : (
+                        <img
+                            src={displayProject.image}
+                            alt={`${displayProject.title} detailed preview`}
+                            className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
+                        />
+                    )}
                 </div>
             </div>
         </div>

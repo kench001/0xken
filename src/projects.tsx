@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import feasifyPreview from './assets/feasify-landing-page.png';
+import feasifyLoop from './assets/feasifyLoop.mp4';
+import gamedevLoop from './assets/gamedevLoop.mp4';
+import attendscanLoop from './assets/attendscanLoop.mp4';
+import universityHuntLoop from './assets/university-huntLoop.mp4';
 import attendscanPreview from './assets/attendscan_preview.png';
 import universityHuntPreview from './assets/universityhunt.png';
 import riseOfBakunawaPreview from './assets/Rise of bakunawa.jpg';
@@ -224,6 +228,7 @@ export const Projects = React.memo(() => {
       description: 'A comprehensive platform for feasibility studies and project management, streamlining workflows for modern teams.',
       detailedDescription: 'Feasify is a web-based project management platform tailored for collaborative feasibility studies. It streamlines team workflows by providing structured modules for documentation, financial analysis, risk assessment, and milestone tracking. The system enables real-time collaboration, automatic report generation, and role-based permissions, allowing organizations to evaluate projects efficiently.',
       image: feasifyPreview,
+      video: feasifyLoop,
       color: 'rgba(0, 255, 170, 0.08)',
       technologies: {
         frontend: 'React, TypeScript, Tailwind CSS',
@@ -235,7 +240,7 @@ export const Projects = React.memo(() => {
         documentExporting: 'jsPDF, dom-to-image',
         hosting: 'Vercel'
       },
-      projectUrl: 'https://feasify.com'
+      projectUrl: 'https://feasify-ten.vercel.app/'
     },
     {
       number: '02',
@@ -244,12 +249,13 @@ export const Projects = React.memo(() => {
       description: 'Smart attendance tracking system using QR codes and real-time analytics for educational institutions and events.',
       detailedDescription: 'AttendScan is a smart, mobile-first attendance management system designed to eliminate manual sign-ins. Users generate unique, dynamic QR codes, which attendees scan to check in instantly. The admin dashboard features real-time tracking with Chart.js visualizations, geolocation validation to prevent fraud, and comprehensive PDF/CSV report exports for simple integration with academic or corporate databases. Built with React, TypeScript, TailwindCSS, and Chart.js on the frontend, powered by a Firebase (NoSQL) backend for scalable real-time data management.',
       image: attendscanPreview,
+      video: attendscanLoop,
       color: 'rgba(0, 204, 255, 0.08)',
       technologies: {
         frontend: 'React, TypeScript, TailwindCSS, Chart.js',
         backend: 'Firebase (NoSQL)'
       },
-      projectUrl: 'https://attendscan.com'
+      projectUrl: 'https://my-project-attend-scan-git-main-ramon-boninas-projects.vercel.app/login'
     },
     {
       number: '03',
@@ -258,12 +264,13 @@ export const Projects = React.memo(() => {
       description: 'A specialized search engine and platform helping students discover and compare universities across metro manila.',
       detailedDescription: 'University-Hunt is a comprehensive portal and search engine designed to assist incoming college students in navigating educational options in Metro Manila. The platform offers advanced filtering by program, tuition range, location, and facility reviews. It also includes an interactive comparison matrix and virtual map integrations to help students plan their academic future.',
       image: universityHuntPreview,
+      video: universityHuntLoop,
       color: 'rgba(255, 100, 255, 0.08)',
       technologies: {
         frontend: 'React, TypeScript, TailwindCSS, Mapbox API',
         backend: 'N/A (Static Web)'
       },
-      projectUrl: 'https://universityhunt.com'
+      projectUrl: 'https://github.com/kench001/University-Hunt'
     },
   ];
 
@@ -275,6 +282,7 @@ export const Projects = React.memo(() => {
       description: 'A PVP TCG game with two factions — Tribesmen vs Bakunawa — as they battle to prevent the moon from being devoured.',
       detailedDescription: 'Rise of the Bakunawa — a PVP TCG game where two factions (Tribesmen vs Bakunawa) battle to prevent the moon from being devoured. Awarded 1st Place in People\'s Choice with 100+ players in a one-day university event.',
       image: riseOfBakunawaPreview,
+      video: gamedevLoop,
       color: 'rgba(0, 255, 170, 0.05)',
       technologies: {
         frontend: 'Unity, C#, 3Ds, Adobe Photoshop, Jira, GitHub'

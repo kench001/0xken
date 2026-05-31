@@ -226,8 +226,14 @@ export const Projects = React.memo(() => {
       image: feasifyPreview,
       color: 'rgba(0, 255, 170, 0.08)',
       technologies: {
-        frontend: 'React, TypeScript, TailwindCSS',
-        backend: 'N/A (Static Web)'
+        frontend: 'React, TypeScript, Tailwind CSS',
+        backend: 'Node.js, Express.js',
+        database: 'Cloud Firestore',
+        authentication: 'Firebase Authentication',
+        realTime: 'Socket.io',
+        aiIntegration: 'Google Gemini API',
+        documentExporting: 'jsPDF, dom-to-image',
+        hosting: 'Vercel'
       },
       projectUrl: 'https://feasify.com'
     },
@@ -271,7 +277,7 @@ export const Projects = React.memo(() => {
       image: riseOfBakunawaPreview,
       color: 'rgba(0, 255, 170, 0.05)',
       technologies: {
-        frontend: 'Unity, C#, 3Ds, Adobe Photoshop'
+        frontend: 'Unity, C#, 3Ds, Adobe Photoshop, Jira, GitHub'
       }
     },
     {

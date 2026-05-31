@@ -11,6 +11,13 @@ export interface ProjectData {
     technologies?: {
         frontend?: string;
         backend?: string;
+        database?: string;
+        authentication?: string;
+        realTime?: string;
+        aiIntegration?: string;
+        documentExporting?: string;
+        hosting?: string;
+        [key: string]: string | undefined;
     };
     projectUrl?: string;
 }
@@ -96,16 +103,36 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
 
     const glowColor = displayProject.color.replace(/0\.\d+\)/, '0.25)');
 
-    const hasTechnologies = !!(displayProject.technologies && (displayProject.technologies.frontend || displayProject.technologies.backend));
+    const hasTechnologies = !!(displayProject.technologies && Object.keys(displayProject.technologies).length > 0);
+
+    const formatKey = (key: string) => {
+        const specialMappings: Record<string, string> = {
+            frontend: 'Frontend',
+            backend: 'Backend',
+            database: 'Database',
+            authentication: 'Authentication',
+            realTime: 'Real-time Communication',
+            aiIntegration: 'AI Integration',
+            documentExporting: 'Document Exporting',
+            hosting: 'Hosting'
+        };
+        if (specialMappings[key]) return specialMappings[key];
+        return key
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/[-_]/g, ' ')
+            .trim()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    };
 
     return (
         <div
             data-lenis-prevent
-            className={`fixed inset-0 z-[120] bg-black/95 backdrop-blur-md overflow-y-auto text-white transition-all duration-700 ease-out ${
-                isFullyOpen
-                    ? 'rounded-none border-t-transparent'
-                    : 'rounded-t-[32px] md:rounded-t-[48px] border-t border-white/10'
-            } ${animState.open ? 'translate-y-0' : 'translate-y-full'}`}
+            className={`fixed inset-0 z-[120] bg-black/95 backdrop-blur-md overflow-y-auto text-white transition-all duration-700 ease-out ${isFullyOpen
+                ? 'rounded-none border-t-transparent'
+                : 'rounded-t-[32px] md:rounded-t-[48px] border-t border-white/10'
+                } ${animState.open ? 'translate-y-0' : 'translate-y-full'}`}
             style={{ scrollbarWidth: 'thin', overscrollBehavior: 'contain' }}
         >
             {/* Top Close Button (X) */}
@@ -159,24 +186,49 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
                                 Technologies
                             </span>
                             <div className="w-full h-px bg-white/10 mt-3 mb-6" />
-                            <div className="flex flex-col gap-2 text-base md:text-lg text-white/70 font-outfit leading-relaxed">
-                                {displayProject.technologies?.frontend && displayProject.technologies?.backend ? (
-                                    <>
-                                        <div>
-                                            <span className="text-white/40 font-semibold">Frontend: </span>
-                                            <span>{displayProject.technologies.frontend}</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-white/40 font-semibold">Backend: </span>
-                                            <span>{displayProject.technologies.backend}</span>
-                                        </div>
-                                    </>
-                                ) : displayProject.technologies?.frontend ? (
-                                    <span>{displayProject.technologies.frontend}</span>
-                                ) : displayProject.technologies?.backend ? (
-                                    <span>{displayProject.technologies.backend}</span>
-                                ) : null}
-                            </div>
+                            {displayProject.title === 'Feasify' ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm md:text-base text-white/70 font-outfit leading-relaxed">
+                                    {/* Column 1 */}
+                                    <div className="flex flex-col gap-3">
+                                        {['frontend', 'backend', 'database', 'authentication'].map((key) => {
+                                            const value = displayProject.technologies?.[key];
+                                            if (!value) return null;
+                                            return (
+                                                <div key={key} className="flex flex-col">
+                                                    <span className="text-white/40 font-semibold text-xs tracking-wide">{formatKey(key)}</span>
+                                                    <span className="text-white/80 text-sm md:text-base mt-0.5">{value}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    
+                                    {/* Column 2 */}
+                                    <div className="flex flex-col gap-3">
+                                        {['realTime', 'aiIntegration', 'documentExporting', 'hosting'].map((key) => {
+                                            const value = displayProject.technologies?.[key];
+                                            if (!value) return null;
+                                            return (
+                                                <div key={key} className="flex flex-col">
+                                                    <span className="text-white/40 font-semibold text-xs tracking-wide">{formatKey(key)}</span>
+                                                    <span className="text-white/80 text-sm md:text-base mt-0.5">{value}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-2 text-base md:text-lg text-white/70 font-outfit leading-relaxed">
+                                    {Object.entries(displayProject.technologies || {}).map(([key, value]) => {
+                                        if (!value) return null;
+                                        return (
+                                            <div key={key}>
+                                                <span className="text-white/40 font-semibold">{formatKey(key)}: </span>
+                                                <span>{value}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     ) : (
                         /* Empty spacing block or hidden helper to maintain 2 columns layout symmetry if needed, otherwise none */
@@ -186,9 +238,8 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project, onClose
 
                 {/* Glowing Project Image Preview */}
                 <div
-                    className={`relative w-full overflow-hidden rounded-2xl border border-white/10 transition-all duration-700 bg-zinc-900 mt-4 preview-item-reveal ${
-                        hasTechnologies ? 'preview-delay-4' : 'preview-delay-3'
-                    } ${animState.open ? 'is-active' : ''}`}
+                    className={`relative w-full overflow-hidden rounded-2xl border border-white/10 transition-all duration-700 bg-zinc-900 mt-4 preview-item-reveal ${hasTechnologies ? 'preview-delay-4' : 'preview-delay-3'
+                        } ${animState.open ? 'is-active' : ''}`}
                     style={{
                         boxShadow: `0 0 60px -15px ${glowColor}`
                     }}

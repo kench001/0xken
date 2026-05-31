@@ -236,7 +236,7 @@ export const Projects = React.memo(() => {
       title: 'AttendScan',
       category: 'Lead Dev',
       description: 'Smart attendance tracking system using QR codes and real-time analytics for educational institutions and events.',
-      detailedDescription: 'AttendScan is a smart, mobile-first attendance management system designed to eliminate manual sign-ins. Users generate unique, dynamic QR codes, which attendees scan to check in instantly. The admin dashboard features real-time tracking, geolocation validation to prevent fraud, and comprehensive PDF/CSV report exports for simple integration with academic or corporate databases. The platform was rebuilt from React Native + Expo to React + TypeScript with a Firebase (NoSQL) backend for scalable real-time data management.',
+      detailedDescription: 'AttendScan is a smart, mobile-first attendance management system designed to eliminate manual sign-ins. Users generate unique, dynamic QR codes, which attendees scan to check in instantly. The admin dashboard features real-time tracking with Chart.js visualizations, geolocation validation to prevent fraud, and comprehensive PDF/CSV report exports for simple integration with academic or corporate databases. Built with React, TypeScript, TailwindCSS, and Chart.js on the frontend, powered by a Firebase (NoSQL) backend for scalable real-time data management.',
       image: attendscanPreview,
       color: 'rgba(0, 204, 255, 0.08)',
       technologies: {
